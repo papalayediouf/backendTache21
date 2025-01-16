@@ -14,7 +14,7 @@ connecterDB();
 // Middleware pour analyser les requêtes JSON
 app.use(express.json());
 
-application.use(cors());
+app.use(cors());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
