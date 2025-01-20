@@ -1,27 +1,44 @@
-require('dotenv').config(); 
 const express = require('express');
-const connecterDB = require('./config/db');
-const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+const dotenv = require('dotenv');
+const connectDB = require('./config/baseDeDonnees');
+const swaggerUi = require('swagger-ui-express');
+const yaml = require('yamljs');
+const cors = require('cors')
+const path = require("path");
+
+
+// Charger les variables d'environnement
+dotenv.config();
+
+// Connexion à la base de données
+connectDB();
 
 const app = express();
-
-// Connexion à MongoDB
-connecterDB();
-
-// Middleware pour analyser les requêtes JSON
 app.use(express.json());
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 app.use(cors());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/admin', adminRoutes);
+// Charger le fichier Swagger YAML
+const swaggerDocument = yaml.load('./docs/swagger.yaml');
 
-// Démarrage du serveur
+// Documentation Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+console.log('http://localhost:5000/api-docs');
+
+
+// Routes
+const utilisateurRoutes = require('./routes/routesUtilisateurs');
+const serviceRoutes = require('./routes/routesServices'); 
+app.use('/api/utilisateurs', utilisateurRoutes);
+app.use('/api/services', serviceRoutes);
+
+//
+
+
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
-});//
+
+app.listen(PORT, () => console.log(`Serveur en cours d'exécution sur le port ${PORT}`));

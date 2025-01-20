@@ -1,0 +1,21 @@
+///backend/models/utilisateurModele.js
+
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const utilisateurSchema = mongoose.Schema({
+    nom: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    motDePasse: { type: String, required: true },
+    role: { type: String, enum: ['client', 'prestataire', 'admin'], default: 'client' }
+});
+
+// Hashage du mot de passe avant la sauvegarde
+utilisateurSchema.pre('save', async function (next) {
+    if (!this.isModified('motDePasse')) {
+        next(); 
+    }
+    this.motDePasse = await bcrypt.hash(this.motDePasse, 10);
+});
+
+module.exports = mongoose.model('Utilisateur', utilisateurSchema);
