@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const verifierToken = (req, res, next) => {
-    // Récupération du token depuis les en-têtes
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
         console.log("Aucun token fourni dans les en-têtes.");
@@ -9,7 +8,6 @@ const verifierToken = (req, res, next) => {
     }
 
     try {
-        // Vérification et décodage du token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         console.log("Utilisateur décodé :", decoded);
 

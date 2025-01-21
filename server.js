@@ -21,7 +21,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(cors());
 
-// Charger le fichier Swagger YAML
 const swaggerDocument = yaml.load('./docs/swagger.yaml');
 
 // Documentation Swagger

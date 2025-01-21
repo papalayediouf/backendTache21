@@ -26,13 +26,10 @@ router.post(
     ajouterService
 );
 
-// Route pour récupérer tous les services
-// backend/routes/routesServices.js
 router.get('/tous-les-services', async (req, res) => {
   try {
     const services = await Service.find();
 
-    // Ajouter l'URL complète de l'image pour chaque service
     const servicesWithImageUrls = services.map(service => ({
       ...service.toObject(),
       imageUrl: `http://localhost:5000/uploads/images/${service.image}`,  

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { verifierToken } = require('../middlewares/authentification'); // Middleware pour vérifier le token
-const verifierRole = require('../middlewares/verifierRole'); // Middleware pour vérifier les rôles
-const Utilisateur = require('../models/utilisateurModele'); // Modèle des utilisateurs
+const { verifierToken } = require('../middlewares/authentification'); 
+const verifierRole = require('../middlewares/verifierRole'); 
+const Utilisateur = require('../models/utilisateurModele'); 
 
 // Route accessible uniquement à l'administrateur
 router.get('/admin/dashboard', verifierToken, verifierRole(['admin']), (req, res) => {
@@ -14,7 +14,6 @@ router.get('/prestataire/ajouter-service', verifierToken, verifierRole(['prestat
     res.json({ message: "Page pour ajouter un service." });
 });
 
-// Route accessible à tous les utilisateurs connectés (client, prestataire, admin)
 router.get('/profil', verifierToken, (req, res) => {
     res.json({ message: `Bienvenue, ${req.utilisateur.nom}.` });
 });
