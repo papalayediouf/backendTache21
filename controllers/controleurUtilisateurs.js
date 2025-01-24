@@ -1,7 +1,7 @@
 
 //backend/controllers/controleurUtilisateurs.js
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Utilisateur = require('../models/utilisateurModele');
 
 // Fonction pour générer un token JWT
