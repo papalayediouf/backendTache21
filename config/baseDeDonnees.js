@@ -4,12 +4,12 @@ const Utilisateur = require('../models/utilisateurModele');
 const bcrypt = require('bcryptjs');
 
 
-
+//
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);
         console.log('Connexion à MongoDB réussie');
-//
+
         const adminExist = await Utilisateur.findOne({ role: 'admin' });
         if (!adminExist) {
             const admin = new Utilisateur({

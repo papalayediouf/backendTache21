@@ -5,12 +5,12 @@ const bcrypt = require('bcryptjs');
 
 const utilisateurSchema = mongoose.Schema({
     nom: { type: String, required: true },
+    prenom: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     motDePasse: { type: String, required: true },
     role: { type: String, enum: ['client', 'prestataire', 'admin'], default: 'client' }
 });
 
-// Hashage du mot de passe avant la sauvegarde
 utilisateurSchema.pre('save', async function (next) {
     if (!this.isModified('motDePasse')) {
         next(); 

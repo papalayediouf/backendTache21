@@ -11,7 +11,9 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:5000',
+                // url: 'http://localhost:5000',
+                url: 'https://backendtache21.onrender.com',
+
                 description: 'Serveur local',
             },
         ],
@@ -30,7 +32,7 @@ const options = {
             },
         ],
     },
-    apis: ['./routes/*.js'], // Documentation générée pour les routes dans ce dossier
+    apis: ['./routes/*.js'], 
 };
 
 const swaggerSpec = swaggerJsDoc(options);

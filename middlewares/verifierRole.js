@@ -1,4 +1,8 @@
 const verifierRole = (rolesAutorises) => {
+    if (!Array.isArray(rolesAutorises) || rolesAutorises.length === 0) {
+        throw new Error("Le middleware 'verifierRole' nécessite un tableau non vide de rôles autorisés.");
+    }
+
     return (req, res, next) => {
         try {
             if (!req.utilisateur) {
@@ -10,7 +14,12 @@ const verifierRole = (rolesAutorises) => {
             const rolesNormaux = rolesAutorises.map(role => role.toLowerCase());
 
             if (!rolesNormaux.includes(roleUtilisateur)) {
-                return res.status(403).json({ message: `Accès refusé : rôle '${roleUtilisateur}' non autorisé.` });
+                console.warn(
+                    `Accès refusé : rôle '${roleUtilisateur}' non autorisé. Rôles autorisés : ${rolesNormaux.join(', ')}.`
+                );
+                return res.status(403).json({
+                    message: `Accès refusé. Votre rôle actuel est '${roleUtilisateur}', mais les rôles requis sont : ${rolesNormaux.join(', ')}.`
+                });
             }
 
             next();
@@ -22,4 +31,3 @@ const verifierRole = (rolesAutorises) => {
 };
 
 module.exports = verifierRole;
-//
