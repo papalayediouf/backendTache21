@@ -11,7 +11,7 @@ const genererToken = (id, role) => {
 
 // Inscription
 const inscription = async (req, res) => {
-    const { nom, email, motDePasse } = req.body;
+    const { nom , prenom , email, motDePasse } = req.body;
 
     try {
         // Vérifie si l'email existe déjà
@@ -21,7 +21,7 @@ const inscription = async (req, res) => {
         }
 
         // Création de l'utilisateur
-        const utilisateur = await Utilisateur.create({ nom, email, motDePasse });
+        const utilisateur = await Utilisateur.create({ nom,prenom , email, motDePasse });
 
         // Réponse de succès avec un message clair
         res.status(201).json({
@@ -74,6 +74,7 @@ const connexion = async (req, res) => {
         res.json({
             id: utilisateur._id,
             nom: utilisateur.nom,
+            prenom: utilisateur.prenom,
             email: utilisateur.email,
             role: utilisateur.role,
             token: genererToken(utilisateur._id, utilisateur.role),
