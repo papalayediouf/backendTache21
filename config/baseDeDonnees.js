@@ -16,6 +16,7 @@ const connectDB = async () => {
                 email: 'papalayediouf17@gmail.com',
                 motDePasse: 'admin1234',
                 nom: 'Admin',
+                prenom: 'Admin',
                 role: 'admin',
             });
 

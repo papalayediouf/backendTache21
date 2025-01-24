@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const Utilisateur = require('../models/utilisateurModele');
 
+//mot de passe oublier
 const demanderReinitialisationMotDePasse = async (requete, reponse) => {
   const { email } = requete.body;
 
@@ -42,7 +43,7 @@ const demanderReinitialisationMotDePasse = async (requete, reponse) => {
   }
 };
 
-// Fonction pour réinitialiser le mot de passe
+// Fonction pour reinitialiser le mot de passe
 const reinitialiserMotDePasse = async (requete, reponse) => {
   const { email, codeReset, nouveauMotDePasse } = requete.body;
 

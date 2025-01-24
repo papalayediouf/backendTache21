@@ -28,6 +28,7 @@ const inscription = async (req, res) => {
             message: "Inscription réussie. Vous pouvez maintenant vous connecter.",
             id: utilisateur._id,
             nom: utilisateur.nom,
+            prenom: utilisateur.nom,
             email: utilisateur.email,
             role: utilisateur.role,
         });
