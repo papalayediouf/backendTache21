@@ -1,7 +1,7 @@
 //backend/config/baseDeDonnees.js
 const mongoose = require('mongoose');
 const Utilisateur = require('../models/utilisateurModele');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 
 //

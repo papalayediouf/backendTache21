@@ -1,7 +1,7 @@
 ///backend/models/utilisateurModele.js
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 const utilisateurSchema = mongoose.Schema({
     nom: { type: String, required: true },
