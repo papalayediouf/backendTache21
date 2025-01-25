@@ -9,9 +9,9 @@ const {
 const routeur = express.Router();
 
 // Route pour demander la reinitialisation du mot de passe
-routeur.post('/mot-de-passe-oublie', demanderReinitialisationMotDePasse);
+routeur.post('/oublié', demanderReinitialisationMotDePasse);
 
 // Route pour reinitialiser le mot de passe
-routeur.post('/reinitialiser-mot-de-passe', reinitialiserMotDePasse);
+routeur.post('/modifier', reinitialiserMotDePasse);
 
 module.exports = routeur;

@@ -10,6 +10,10 @@ const prestataireSchema = mongoose.Schema(
     telephone: { type: String, required: true },
     region: { type: String, required: true },
     description: { type: String, required: true }, 
+    role: {
+      type: String,
+      default: 'prestataire', // Valeur par défaut
+    },
   },
   {
     timestamps: true,

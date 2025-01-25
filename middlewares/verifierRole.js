@@ -1,3 +1,5 @@
+//backendTache21/middlewares/verifierRole.js
+
 const verifierRole = (rolesAutorises) => {
     if (!Array.isArray(rolesAutorises) || rolesAutorises.length === 0) {
         throw new Error("Le middleware 'verifierRole' nécessite un tableau non vide de rôles autorisés.");
