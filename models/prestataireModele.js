@@ -12,7 +12,7 @@ const prestataireSchema = mongoose.Schema(
     description: { type: String, required: true }, 
     role: {
       type: String,
-      default: 'prestataire', // Valeur par défaut
+      default: 'prestataire', 
     },
   },
   {

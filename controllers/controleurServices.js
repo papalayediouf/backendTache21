@@ -2,23 +2,31 @@ const Service = require("../models/serviceModele");
 
 const ajouterService = async (req, res) => {
   try {
-    const { titre, description, prix } = req.body;
-    const image = req.file ? req.file.path.replace("C:/Dev/'Tache 21 Test'/backend", "") : null;
+    const {
+      nomDeservice,
+      categorie,
+      descriptionDeService,
+    } = req.body;
 
-    // Vérification des champs
-    if (!titre || !description || !prix || !image) {
-      return res.status(400).json({ message: "Tous les champs sont requis." });
+    const imageService = req.files?.imageService?.[0]?.path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/") || null;
+    const imageDiplomes = req.files?.imageDiplomes?.[0]?.path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/") || null;
+
+    // Vérification des champs requis
+    if (!nomDeservice || !categorie || !descriptionDeService || !imageService) {
+      return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
     }
 
-    // Création d'un nouveau service
+    // Création du nouveau service
     const nouveauService = new Service({
-      titre,
-      description,
-      prix: parseFloat(prix),
-      image: image.replace(/\\/g, "/"),
-      prestataire: req.utilisateur.id, 
+      nomDeservice,
+      categorie,
+      descriptionDeService,
+      imageService,
+      imageDiplomes,
+      prestataire: req.utilisateur.id, // ID du prestataire lié
     });
 
+    // Sauvegarde dans la base de données
     const serviceCree = await nouveauService.save();
     res.status(201).json(serviceCree);
   } catch (err) {
