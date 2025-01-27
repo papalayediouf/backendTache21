@@ -23,7 +23,7 @@ const demanderReinitialisationMotDePasse = async (requete, reponse) => {
     const hashCode = crypto.createHash('sha256').update(codeReset).digest('hex');
 
     utilisateur.codeReset = hashCode;
-    utilisateur.codeResetExpire = Date.now() + 3600000; // 1 heure d'expiration
+    utilisateur.codeResetExpire = Date.now() + 3600000; 
     await utilisateur.save();
 
     const transporter = nodemailer.createTransport({
@@ -56,7 +56,7 @@ const reinitialiserMotDePasse = async (requete, reponse) => {
   try {
     const hashedCodeReset = crypto.createHash('sha256').update(codeReset).digest('hex');
 
-    // Chercher l'utilisateur dans les modèles Prestataire et Client
+    // Chercher l'utilisateur dans les modèles Prestataire et Client.
     let utilisateur = await Prestataire.findOne({
       email,
       codeReset: hashedCodeReset,
