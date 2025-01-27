@@ -22,7 +22,7 @@ const inscriptionClient = async (req, res) => {
       prenom,
       email,
       motDePasse: motDePasseHashe,
-      role: 'client', // Le rôle par défaut est 'client'
+      role: 'client',
     });
 
     // Sauvegarde du client dans la base de données

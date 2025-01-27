@@ -4,13 +4,13 @@ const prestataireSchema = mongoose.Schema(
   {
     nom: { type: String, required: true },
     prenom: { type: String, required: true },
-    nomDeLentreprise: { type: String, required: true }, // Correction ici
     email: { type: String, required: true, unique: true },
     motDePasse: { type: String, required: true },
+    nomDeLentreprise: { type: String, required: true }, 
     telephone: { type: String, required: true },
     region: { type: String, required: true },
-    departement: { type: String, required: true }, // Champ ajouté
-    description: { type: String, required: true },
+    departement: { type: String, required: true }, 
+    description: { type: String,  },
     role: {
       type: String,
       default: 'prestataire',

@@ -24,7 +24,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 console.log('Documentation API disponible sur : http://localhost:5000/api-docs');
 
 // Importation des routes
-const utilisateurRoutes = require('./routes/routesUtilisateurs'); 
+// const utilisateurRoutes = require('./routes/routesUtilisateurs'); 
 const serviceRoutes = require('./routes/routesServices'); 
 const motDePasseRoutes = require('./routes/routesMotDePasse'); 
 const adminRoutes = require('./routes/routesAdministrateur');
@@ -34,7 +34,7 @@ const clientRoutes = require('./routes/routeClient');
 const prestataireRoutes = require('./routes/routePrestataire'); 
 
 // Définition des routes principales
-app.use('/api/utilisateurs', utilisateurRoutes);
+// app.use('/api/utilisateurs', utilisateurRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/mot-de-passe', motDePasseRoutes);
 app.use('/api/admin', adminRoutes);
