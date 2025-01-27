@@ -1,14 +1,20 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const Utilisateur = require('../models/utilisateurModele');
+const Prestataire = require('../models/prestataireModele');
+const Client = require('../models/clientModele');
 
-//mot de passe oublier
+// Demande de réinitialisation de mot de passe
 const demanderReinitialisationMotDePasse = async (requete, reponse) => {
   const { email } = requete.body;
 
   try {
-    const utilisateur = await Utilisateur.findOne({ email });
+    // Chercher l'utilisateur dans le modèle Prestataire ou Client
+    let utilisateur = await Prestataire.findOne({ email });
+    if (!utilisateur) {
+      utilisateur = await Client.findOne({ email });
+    }
+
     if (!utilisateur) {
       return reponse.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
@@ -17,7 +23,7 @@ const demanderReinitialisationMotDePasse = async (requete, reponse) => {
     const hashCode = crypto.createHash('sha256').update(codeReset).digest('hex');
 
     utilisateur.codeReset = hashCode;
-    utilisateur.codeResetExpire = Date.now() + 3600000; 
+    utilisateur.codeResetExpire = Date.now() + 3600000; // 1 heure d'expiration
     await utilisateur.save();
 
     const transporter = nodemailer.createTransport({
@@ -43,18 +49,27 @@ const demanderReinitialisationMotDePasse = async (requete, reponse) => {
   }
 };
 
-// Fonction pour reinitialiser le mot de passe
+// Fonction pour réinitialiser le mot de passe
 const reinitialiserMotDePasse = async (requete, reponse) => {
   const { email, codeReset, nouveauMotDePasse } = requete.body;
 
   try {
     const hashedCodeReset = crypto.createHash('sha256').update(codeReset).digest('hex');
 
-    const utilisateur = await Utilisateur.findOne({
+    // Chercher l'utilisateur dans les modèles Prestataire et Client
+    let utilisateur = await Prestataire.findOne({
       email,
       codeReset: hashedCodeReset,
       codeResetExpire: { $gt: Date.now() },
     });
+
+    if (!utilisateur) {
+      utilisateur = await Client.findOne({
+        email,
+        codeReset: hashedCodeReset,
+        codeResetExpire: { $gt: Date.now() },
+      });
+    }
 
     if (!utilisateur) {
       return reponse.status(400).json({ message: 'Code invalide ou expiré.' });
