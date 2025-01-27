@@ -11,7 +11,6 @@ const verifierRole = (rolesAutorises) => {
                 return res.status(401).json({ message: "Utilisateur non authentifié." });
             }
 
-            // Normalisation des rôles en minuscules
             const roleUtilisateur = req.utilisateur.role.toLowerCase();
             const rolesNormaux = rolesAutorises.map(role => role.toLowerCase());
 

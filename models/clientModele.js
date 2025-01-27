@@ -2,36 +2,35 @@
 
 const mongoose = require('mongoose');
 
-// Définition du schéma pour le modèle Client
 const clientSchema = new mongoose.Schema({
     nom: {
         type: String,
-        required: true, // Le champ est requis
+        required: true, 
         trim: true,
     },
     prenom: {
         type: String,
-        required: true, // Le champ est requis
+        required: true, 
         trim: true,
     },
     email: {
         type: String,
-        required: true, // Le champ est requis
-        unique: true, // Chaque email doit être unique dans la base de données
+        required: true, 
+        unique: true, 
         trim: true,
-        lowercase: true, // Convertit l'email en minuscule
+        lowercase: true, 
     },
     motDePasse: {
         type: String,
-        required: true, // Le mot de passe est requis
+        required: true,
     },
     role: {
         type: String,
-        default: 'client', // Le rôle par défaut est 'client'
+        default: 'client',
     },
 
 }, {
-    timestamps: true, // Ajoute des champs 'createdAt' et 'updatedAt'
+    timestamps: true, 
 });
 
 // Création du modèle à partir du schéma
