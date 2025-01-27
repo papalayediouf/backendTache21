@@ -9,7 +9,7 @@ const {
 const routeur = express.Router();
 
 // Route pour demander la reinitialisation du mot de passe
-routeur.post('/oublié', demanderReinitialisationMotDePasse);
+routeur.post('/oublie', demanderReinitialisationMotDePasse);
 
 // Route pour reinitialiser le mot de passe
 routeur.post('/modifier', reinitialiserMotDePasse);
