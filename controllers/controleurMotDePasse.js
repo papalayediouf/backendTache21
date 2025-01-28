@@ -23,7 +23,7 @@ const demanderReinitialisationMotDePasse = async (requete, reponse) => {
     const hashCode = crypto.createHash('sha256').update(codeReset).digest('hex');
 
     utilisateur.codeReset = hashCode;
-    utilisateur.codeResetExpire = Date.now() + 3600000; 
+    utilisateur.codeResetExpire = Date.now() + 3600000;  // Le code expire dans 1 heure
     await utilisateur.save();
 
     const transporter = nodemailer.createTransport({
@@ -51,12 +51,12 @@ const demanderReinitialisationMotDePasse = async (requete, reponse) => {
 
 // Fonction pour réinitialiser le mot de passe
 const reinitialiserMotDePasse = async (requete, reponse) => {
-  const { email, codeReset, nouveauMotDePasse } = requete.body;
+  const { email, codeReset, nouveauMotDePasse, motDePasseActuel } = requete.body;
 
   try {
     const hashedCodeReset = crypto.createHash('sha256').update(codeReset).digest('hex');
 
-    // Chercher l'utilisateur dans les modèles Prestataire et Client.
+    // Chercher l'utilisateur dans les modèles Prestataire et Client
     let utilisateur = await Prestataire.findOne({
       email,
       codeReset: hashedCodeReset,
@@ -75,6 +75,15 @@ const reinitialiserMotDePasse = async (requete, reponse) => {
       return reponse.status(400).json({ message: 'Code invalide ou expiré.' });
     }
 
+    // Vérification du mot de passe actuel avant de procéder
+    if (motDePasseActuel) {
+      const passwordMatch = await bcrypt.compare(motDePasseActuel, utilisateur.motDePasse);
+      if (!passwordMatch) {
+        return reponse.status(400).json({ message: 'Mot de passe actuel incorrect.' });
+      }
+    }
+
+    // Hachage du nouveau mot de passe
     utilisateur.motDePasse = await bcrypt.hash(nouveauMotDePasse, 10);
     utilisateur.codeReset = undefined;
     utilisateur.codeResetExpire = undefined;
