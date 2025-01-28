@@ -6,7 +6,7 @@ const serviceSchema = mongoose.Schema({
     descriptionDeService: { type: String, required: true },
     imageService: { type: String, default: ''  },
     imageDiplomes: { type: String, default: '' }, //
-    prestataire: { type: mongoose.Schema.Types.ObjectId, ref: 'Prestataire', required: true },
+    prestataire: { type: mongoose.Schema.Types.ObjectId, ref: 'Prestataire',  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Service', serviceSchema);
