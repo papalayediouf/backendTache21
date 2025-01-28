@@ -1,5 +1,3 @@
-const Service = require("../models/serviceModele");
-
 const ajouterService = async (req, res) => {
   try {
     const {
@@ -8,8 +6,9 @@ const ajouterService = async (req, res) => {
       descriptionDeService,
     } = req.body;
 
-    const imageService = req.files?.imageService?.[0]?.path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/") || null;
-    const imageDiplomes = req.files?.imageDiplomes?.[0]?.path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/") || null;
+    // Vérification de l'existence des images avant d'essayer d'extraire leur chemin
+    const imageService = req.files?.imageService?.[0]?.path ? req.files.imageService[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/") : null;
+    const imageDiplomes = req.files?.imageDiplomes?.[0]?.path ? req.files.imageDiplomes[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/") : null;
 
     // Vérification des champs requis
     if (!nomDeservice || !categorie || !descriptionDeService ) {
