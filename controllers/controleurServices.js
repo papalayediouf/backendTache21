@@ -1,3 +1,6 @@
+const Service = require("../models/serviceModele");
+const mongoose = require("mongoose");
+
 const ajouterService = async (req, res) => {
   try {
     const {
@@ -6,12 +9,17 @@ const ajouterService = async (req, res) => {
       descriptionDeService,
     } = req.body;
 
-    // Vérification de l'existence des images avant d'essayer d'extraire leur chemin
-    const imageService = req.files?.imageService?.[0]?.path ? req.files.imageService[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/") : null;
-    const imageDiplomes = req.files?.imageDiplomes?.[0]?.path ? req.files.imageDiplomes[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/") : null;
+    // Récupérer et formater les chemins des images
+    const imageService = req.files?.imageService?.[0]?.path
+      ? req.files.imageService[0].path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/")
+      : null;
+
+    const imageDiplomes = req.files?.imageDiplomes?.[0]?.path
+      ? req.files.imageDiplomes[0].path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/")
+      : null;
 
     // Vérification des champs requis
-    if (!nomDeservice || !categorie || !descriptionDeService ) {
+    if (!nomDeservice || !categorie || !descriptionDeService) {
       return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
     }
 
@@ -36,7 +44,12 @@ const ajouterService = async (req, res) => {
 
 const obtenirDetailService = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;  // Récupérer l'ID du service depuis les paramètres de l'URL
+
+    // Vérification si l'ID est valide
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID invalide." });
+    }
 
     // Chercher le service dans la base de données en utilisant l'ID
     const service = await Service.findById(id);
