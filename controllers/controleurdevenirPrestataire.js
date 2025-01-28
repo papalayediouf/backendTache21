@@ -3,7 +3,7 @@ const Prestataire = require('../models/prestataireModele');
 
 // Inscription d'un prestataire
 const inscriptionPrestataire = async (req, res) => {
-  const { nom, prenom, email ,telephone, motDePasse, nomDeLentreprise ,  region,  departement ,description} = req.body;
+  const { nom, prenom, email, telephone, motDePasse, nomDeLentreprise, region, departement, description } = req.body;
 
   try {
     // Vérifier si un prestataire existe déjà avec cet email
@@ -21,7 +21,7 @@ const inscriptionPrestataire = async (req, res) => {
       motDePasse: await bcrypt.hash(motDePasse, 10),
       nomDeLentreprise,
       region,
-      departement, 
+      departement,
       description,
     });
 
@@ -39,7 +39,7 @@ const inscriptionPrestataire = async (req, res) => {
         motDePasse: prestataire.motDePasse,
         nomDeLentreprise: prestataire.nomDeLentreprise,
         region: prestataire.region,
-        departement: prestataire.departement, 
+        departement: prestataire.departement,
         description: prestataire.description,
       },
     });
@@ -49,6 +49,35 @@ const inscriptionPrestataire = async (req, res) => {
   }
 };
 
+// Récupérer le profil du prestataire
+const profilPrestataire = async (req, res) => {
+  try {
+    // Trouver le prestataire par son ID (qui est dans le token JWT)
+    const prestataire = await Prestataire.findById(req.utilisateur._id).select('-motDePasse'); // On exclut le mot de passe
+    if (!prestataire) {
+      return res.status(404).json({ message: 'Prestataire non trouvé.' });
+    }
+
+    // Retourner les informations du profil
+    res.json({
+      prestataire: {
+        nom: prestataire.nom,
+        prenom: prestataire.prenom,
+        email: prestataire.email,
+        telephone: prestataire.telephone,
+        nomDeLentreprise: prestataire.nomDeLentreprise,
+        region: prestataire.region,
+        departement: prestataire.departement,
+        description: prestataire.description,
+      },
+    });
+  } catch (erreur) {
+    console.error("Erreur lors de la récupération du profil :", erreur);
+    res.status(500).json({ message: 'Erreur interne du serveur.' });
+  }
+};
+
 module.exports = {
   inscriptionPrestataire,
+  profilPrestataire,
 };

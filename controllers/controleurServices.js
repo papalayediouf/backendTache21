@@ -23,7 +23,7 @@ const ajouterService = async (req, res) => {
       descriptionDeService,
       imageService,
       imageDiplomes,
-      prestataire: req.utilisateur.id, // ID du prestataire lié
+      prestataire: req.utilisateur.id,
     });
 
     // Sauvegarde dans la base de données
