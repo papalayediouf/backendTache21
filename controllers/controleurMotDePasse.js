@@ -54,20 +54,21 @@ const reinitialiserMotDePasse = async (requete, reponse) => {
   const { email, codeReset, nouveauMotDePasse, motDePasseActuel } = requete.body;
 
   try {
+    // Hacher le codeReset reçu dans la requête avant la comparaison
     const hashedCodeReset = crypto.createHash('sha256').update(codeReset).digest('hex');
 
     // Chercher l'utilisateur dans les modèles Prestataire et Client
     let utilisateur = await Prestataire.findOne({
       email,
-      codeReset: hashedCodeReset,
-      codeResetExpire: { $gt: Date.now() },
+      codeReset: hashedCodeReset, // Comparer avec le code haché
+      codeResetExpire: { $gt: Date.now() }, // Vérifier que le code n'est pas expiré
     });
 
     if (!utilisateur) {
       utilisateur = await Client.findOne({
         email,
-        codeReset: hashedCodeReset,
-        codeResetExpire: { $gt: Date.now() },
+        codeReset: hashedCodeReset, // Comparer avec le code haché
+        codeResetExpire: { $gt: Date.now() }, // Vérifier que le code n'est pas expiré
       });
     }
 
@@ -75,7 +76,7 @@ const reinitialiserMotDePasse = async (requete, reponse) => {
       return reponse.status(400).json({ message: 'Code invalide ou expiré.' });
     }
 
-    // Vérification du mot de passe actuel avant de procéder
+    // Vérification du mot de passe actuel (si fourni)
     if (motDePasseActuel) {
       const passwordMatch = await bcrypt.compare(motDePasseActuel, utilisateur.motDePasse);
       if (!passwordMatch) {
@@ -85,8 +86,8 @@ const reinitialiserMotDePasse = async (requete, reponse) => {
 
     // Hachage du nouveau mot de passe
     utilisateur.motDePasse = await bcrypt.hash(nouveauMotDePasse, 10);
-    utilisateur.codeReset = undefined;
-    utilisateur.codeResetExpire = undefined;
+    utilisateur.codeReset = undefined; // Réinitialiser le code de réinitialisation
+    utilisateur.codeResetExpire = undefined; // Réinitialiser l'expiration
     await utilisateur.save();
 
     reponse.json({ message: 'Mot de passe réinitialisé avec succès.' });
@@ -95,6 +96,7 @@ const reinitialiserMotDePasse = async (requete, reponse) => {
     reponse.status(500).json({ message: 'Erreur lors de la réinitialisation.' });
   }
 };
+
 
 module.exports = {
   demanderReinitialisationMotDePasse,
