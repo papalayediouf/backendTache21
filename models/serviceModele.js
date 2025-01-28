@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const serviceSchema = mongoose.Schema({
     nomDeservice: { type: String, required: true },
     categorie: { type: String, required: true },
-    descriptionDeService: { type: String, required: true }, // Corrigé à String
-    imageService: { type: String, required: true },
-    imageDiplomes: { type: String, default: '' }, // Valeur par défaut pour éviter un champ vide
+    descriptionDeService: { type: String, required: true },
+    imageService: { type: String,  },
+    imageDiplomes: { type: String, default: '' }, //
     prestataire: { type: mongoose.Schema.Types.ObjectId, ref: 'Prestataire', required: true },
 }, { timestamps: true });
 

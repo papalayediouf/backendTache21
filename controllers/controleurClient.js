@@ -48,46 +48,12 @@ const inscriptionClient = async (req, res) => {
   }
 };
 
-// **Connexion d'un client**
-const connexionClient = async (req, res) => {
-  const { email, motDePasse } = req.body;
 
-  try {
-    // Vérifier si le client existe
-    const client = await Client.findOne({ email });
-    if (!client) {
-      return res.status(400).json({ message: "Client non trouvé. Veuillez vérifier votre email." });
-    }
 
-    // Vérifier si le mot de passe est correct
-    const motDePasseCorrect = await bcrypt.compare(motDePasse, client.motDePasse);
-    if (!motDePasseCorrect) {
-      return res.status(400).json({ message: "Mot de passe incorrect." });
-    }
-
-    // Générer un token JWT
-    const token = jwt.sign({ id: client._id, email: client.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.status(200).json({
-      message: "Connexion réussie.",
-      client: {
-        id: client._id,
-        nom: client.nom,
-        prenom: client.prenom,
-        email: client.email,
-        role: client.role,
-      },
-      token, // Envoi du token au client
-    });
-  } catch (error) {
-    console.error("Erreur lors de la connexion du client :", error.message);
-    res.status(500).json({ message: "Erreur interne du serveur." });
-  }
-};
 
 // **Récupérer les informations d'un client**
 const obtenirClient = async (req, res) => {
-  const { id } = req.utilisateur; // Récupération de l'utilisateur connecté (via middleware)
+  const { id } = req.utilisateur;
 
   try {
     const client = await Client.findById(id);
@@ -102,7 +68,6 @@ const obtenirClient = async (req, res) => {
       prenom: client.prenom,
       email: client.email,
       role: client.role,
-      commandes: client.commandes, // Par exemple, commandes spécifiques du client
     });
   } catch (error) {
     console.error("Erreur lors de la récupération du client :", error.message);
@@ -176,7 +141,6 @@ const listeClients = async (req, res) => {
 
 module.exports = {
   inscriptionClient,
-  connexionClient,
   obtenirClient,
   mettreAJourClient,
   supprimerCompteClient,

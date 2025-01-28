@@ -8,7 +8,6 @@ const path = require('path');
 
 dotenv.config(); 
 
-// Connexion à la base de données
 connectDB();
 
 const app = express();

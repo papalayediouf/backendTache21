@@ -2,43 +2,52 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Prestataire = require('../models/prestataireModele');
 const Client = require('../models/clientModele');
+const Admin = require('../models/adminModele');
 
 // Fonction pour générer un token JWT
 const genererToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
-// **Connexion de client et prestataire**
+// **Connexion (Admin, Client, Prestataire)**
 const connexion = async (req, res) => {
   const { email, motDePasse } = req.body;
 
   try {
-    // Chercher l'utilisateur dans le modèle Prestataire ou Client
-    let utilisateur = await Prestataire.findOne({ email });
+    // Vérifier si l'utilisateur est un admin
+    let utilisateur = await Admin.findOne({ email });
+    console.log('Admin trouvé :', utilisateur);  
 
     if (!utilisateur) {
-      utilisateur = await Client.findOne({ email }); 
+      // Vérifier si l'utilisateur est un prestataire
+      utilisateur = await Prestataire.findOne({ email });
+      console.log('Prestataire trouvé :', utilisateur);  
     }
 
-    // Si aucun utilisateur trouvé dans les deux modèles
+    if (!utilisateur) {
+      // Vérifier si l'utilisateur est un client
+      utilisateur = await Client.findOne({ email });
+      console.log('Client trouvé :', utilisateur); 
+    }
+
+    // Si aucun utilisateur trouvé
     if (!utilisateur) {
       return res.status(401).json({ message: "Utilisateur ou mot de passe incorrect." });
     }
 
     // Vérification du mot de passe
     const motDePasseValide = await bcrypt.compare(motDePasse, utilisateur.motDePasse);
+    console.log('Mot de passe valide :', motDePasseValide);  
 
     if (!motDePasseValide) {
       return res.status(401).json({ message: "Utilisateur ou mot de passe incorrect." });
     }
 
-    // Réponse avec les informations utilisateur et token
     res.json({
       message: "Connexion réussie.",
       utilisateur: {
         id: utilisateur._id,
         nom: utilisateur.nom,
-        prenom: utilisateur.prenom,
         email: utilisateur.email,
         role: utilisateur.role, 
       },
@@ -50,4 +59,4 @@ const connexion = async (req, res) => {
   }
 };
 
-module.exports = {connexion};
+module.exports = { connexion };

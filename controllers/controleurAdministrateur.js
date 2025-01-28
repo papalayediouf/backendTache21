@@ -1,5 +1,4 @@
 // backendTache21/controllers/controleurAdministrateur.js
-const Utilisateur = require('../models/utilisateurModele');
 
 // Fonction pour bloquer un prestataire
 const bloquerComptePrestataire = async (requete, reponse) => {

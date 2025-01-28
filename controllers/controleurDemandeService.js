@@ -1,5 +1,4 @@
 const DemandeService = require('../models/demandeServiceModele');
-const Utilisateur = require('../models/utilisateurModele');
 const transporter = require('../config/emailConfig'); // Configuration de Nodemailer
 
 /// **Créer une demande de service et l'envoyer à un prestataire**

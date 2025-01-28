@@ -5,7 +5,7 @@ const path = require("path");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, "../uploads/images");
-    cb(null, uploadPath); // Répertoire de destination
+    cb(null, uploadPath); 
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = `${Date.now()}-${file.originalname}`;
@@ -26,7 +26,7 @@ const upload = multer({
       cb(new Error("Seules les images au format JPEG, JPG, ou PNG sont autorisées."));
     }
   },
-  limits: { fileSize: 2 * 1024 * 1024 }, // Limite de 2 Mo
+  limits: { fileSize: 2 * 1024 * 1024 }, 
 });
 
 module.exports = upload;
