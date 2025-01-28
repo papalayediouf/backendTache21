@@ -41,7 +41,7 @@ router.get('/tous-les-services', async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des services' });
   }
 });
-router.get("/tous-les-services/:id", obtenirDetailService);
+router.get("/:id", obtenirDetailService);
 
 
 module.exports = router;
