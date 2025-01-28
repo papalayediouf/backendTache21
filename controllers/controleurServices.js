@@ -37,7 +37,7 @@ const ajouterService = async (req, res) => {
 
 const obtenirDetailService = async (req, res) => {
   try {
-    const { id } = req.params;  // Récupérer l'ID du service depuis les paramètres de l'URL
+    const { id } = req.params; 
 
     // Chercher le service dans la base de données en utilisant l'ID
     const service = await Service.findById(id);
