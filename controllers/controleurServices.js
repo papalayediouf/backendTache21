@@ -12,7 +12,7 @@ const ajouterService = async (req, res) => {
     const imageDiplomes = req.files?.imageDiplomes?.[0]?.path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/") || null;
 
     // Vérification des champs requis
-    if (!nomDeservice || !categorie || !descriptionDeService || !imageService) {
+    if (!nomDeservice || !categorie || !descriptionDeService ) {
       return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
     }
 
