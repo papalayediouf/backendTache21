@@ -35,4 +35,24 @@ const ajouterService = async (req, res) => {
   }
 };
 
-module.exports = { ajouterService };
+const obtenirDetailService = async (req, res) => {
+  try {
+    const { id } = req.params;  // Récupérer l'ID du service depuis les paramètres de l'URL
+
+    // Chercher le service dans la base de données en utilisant l'ID
+    const service = await Service.findById(id);
+
+    // Vérifier si le service existe
+    if (!service) {
+      return res.status(404).json({ message: "Service non trouvé." });
+    }
+
+    // Retourner le service trouvé
+    res.status(200).json(service);
+  } catch (err) {
+    console.error("Erreur lors de la récupération du service :", err);
+    res.status(500).json({ message: "Erreur interne du serveur." });
+  }
+};
+
+module.exports = { ajouterService, obtenirDetailService };

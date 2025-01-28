@@ -36,13 +36,13 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     client: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Utilisateur',
+      ref: 'client',
       required: true,
       description: 'Référence vers l’utilisateur client ayant fait la demande.',
     },
     prestataire: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Utilisateur',
+      ref: 'prestataire',
       required: true,
       description: 'Référence vers le prestataire assigné à la demande.',
     },

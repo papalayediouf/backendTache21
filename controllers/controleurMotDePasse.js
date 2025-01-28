@@ -86,8 +86,8 @@ const reinitialiserMotDePasse = async (requete, reponse) => {
 
     // Hachage du nouveau mot de passe
     utilisateur.motDePasse = await bcrypt.hash(nouveauMotDePasse, 10);
-    utilisateur.codeReset = undefined; // Réinitialiser le code de réinitialisation
-    utilisateur.codeResetExpire = undefined; // Réinitialiser l'expiration
+    utilisateur.codeReset = undefined; 
+    utilisateur.codeResetExpire = undefined; 
     await utilisateur.save();
 
     reponse.json({ message: 'Mot de passe réinitialisé avec succès.' });

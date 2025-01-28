@@ -1,6 +1,6 @@
 //backend/routes/routesServices.js
 const express = require('express');
-const { ajouterService } = require('../controllers/controleurServices');
+const { ajouterService , obtenirDetailService } = require('../controllers/controleurServices');
 const { verifierToken } = require('../middlewares/authentification');
 const verifierRole = require('../middlewares/verifierRole');
 const Service = require('../models/serviceModele');
@@ -41,6 +41,7 @@ router.get('/tous-les-services', async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des services' });
   }
 });
+router.get("/:id", obtenirDetailService);
 
 
 module.exports = router;

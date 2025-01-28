@@ -17,9 +17,9 @@ const routeur = express.Router();
  * @access Privé (Client uniquement)
  */
 routeur.post(
-  '/',
+  '/demande',
   verifierToken,
-  verifierRole(['client']),
+  verifierRole(['client','prestataire']),
   creerDemandeService
 );
 
