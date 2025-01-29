@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: API de l'application (Client, Prestataire, Admin)
+  title: API de l'application Service locaux (Client, Prestataire, Admin)
   version: 1.0.0
   description: >
     Documentation complète de l'API pour gérer les utilisateurs, services, demandes de services, et rôles.
@@ -20,42 +20,13 @@ security:
 
 paths:
   ### Utilisateurs ###
-  /api/utilisateurs/inscription:
-    post:
-      summary: Inscription d'un nouvel utilisateur
-      tags:
-        - Utilisateurs
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-                - mot_de_passe
-                - nom
-              properties:
-                email:
-                  type: string
-                  description: Email de l'utilisateur.
-                mot_de_passe:
-                  type: string
-                  description: Mot de passe de l'utilisateur.
-                nom:
-                  type: string
-                  description: Nom complet de l'utilisateur.
-      responses:
-        201:
-          description: Utilisateur créé avec succès.
-        400:
-          description: Erreur de validation ou email déjà utilisé.
-
+  
   /api/utilisateurs/connexion:
     post:
       summary: Connexion d'un utilisateur
       tags:
-        - Utilisateurs
+        - Utilisateur
+        
       requestBody:
         required: true
         content:
@@ -78,7 +49,8 @@ paths:
         401:
           description: Email ou mot de passe invalide.
 
-  /api/utilisateurs/inscription-client:
+### Clients###
+  /api/clients/inscription-client:
     post:
       summary: Inscription d'un nouveau client
       tags:
@@ -109,34 +81,8 @@ paths:
         400:
           description: Erreur de validation ou email déjà utilisé.
 
-  /api/utilisateurs/connexion-client:
-    post:
-      summary: Connexion d'un client
-      tags:
-        - Client
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-                - mot_de_passe
-              properties:
-                email:
-                  type: string
-                  description: Email du client.
-                mot_de_passe:
-                  type: string
-                  description: Mot de passe du client.
-      responses:
-        200:
-          description: Connexion réussie.
-        401:
-          description: Email ou mot de passe invalide.
-
-  /api/utilisateurs/profil-client:
+ 
+  /api/clients/profil-client:
     get:
       summary: Récupérer le profil du client connecté
       tags:
@@ -149,7 +95,7 @@ paths:
         401:
           description: Utilisateur non authentifié.
 
-  /api/utilisateurs/mettre-a-jour-client:
+  /api/clients/mettre-a-jour-client:
     put:
       summary: Mettre à jour les informations du client connecté
       tags:
@@ -180,7 +126,7 @@ paths:
         400:
           description: Données invalides.
 
-  /api/utilisateurs/liste-clients:
+  /api/client/liste-clients:
     get:
       summary: Récupérer la liste de tous les clients (par l'admin)
       tags:
@@ -195,7 +141,7 @@ paths:
           description: Utilisateur non authentifié ou accès interdit.
 
 ### Prestataire ###
-  /api/utilisateurs/inscription-prestataire:
+  /api/prestataires/inscription-prestataire:
     post:
       summary: Inscription d'un prestataire
       tags:
@@ -226,34 +172,8 @@ paths:
         400:
           description: Erreur de validation ou email déjà utilisé.
 
-  /api/utilisateurs/connexion-prestataire:
-    post:
-      summary: Connexion d'un prestataire
-      tags:
-        - Prestataire
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-                - mot_de_passe
-              properties:
-                email:
-                  type: string
-                  description: Email du prestataire.
-                mot_de_passe:
-                  type: string
-                  description: Mot de passe du prestataire.
-      responses:
-        200:
-          description: Connexion réussie.
-        401:
-          description: Email ou mot de passe invalide.
-
-  /api/utilisateurs/devenir-prestataire:
+ 
+  /api/prestataires/devenir-prestataire:
     post:
       summary: Devenir prestataire pour un utilisateur déjà inscrit
       tags:
@@ -276,7 +196,7 @@ paths:
         403:
           description: Utilisateur non autorisé à devenir prestataire.
 
-  /api/utilisateurs/profil-prestataire:
+  /api/prestataires/profil-prestataire:
     get:
       summary: Récupérer les informations du profil d'un prestataire connecté
       tags:
@@ -289,7 +209,7 @@ paths:
         401:
           description: Utilisateur non authentifié.
 
-  /api/utilisateurs/mettre-a-jour-prestataire:
+  /api/prestataires/mettre-a-jour-prestataire:
     put:
       summary: Mettre à jour les informations du prestataire connecté
       tags:
@@ -336,10 +256,11 @@ paths:
             schema:
               type: object
               required:
-                - titre
+                - titre services
                 - description
-                - prix
-                - image
+                - categories
+                - imageServices
+                - imageCertificat
               properties:
                 titre:
                   type: string
