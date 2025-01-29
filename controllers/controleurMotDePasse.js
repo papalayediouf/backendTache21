@@ -23,7 +23,7 @@ const demanderReinitialisationMotDePasse = async (requete, reponse) => {
     const hashCode = crypto.createHash('sha256').update(codeReset).digest('hex');
 
     utilisateur.codeReset = hashCode;
-    utilisateur.codeResetExpire = Date.now() + 3600000;  // Le code expire dans 1 heure
+    utilisateur.codeResetExpire = Date.now() + 3600000; // Expire dans 1 heure
     await utilisateur.save();
 
     const transporter = nodemailer.createTransport({
@@ -49,26 +49,25 @@ const demanderReinitialisationMotDePasse = async (requete, reponse) => {
   }
 };
 
-// Fonction pour réinitialiser le mot de passe
+// Réinitialisation du mot de passe
 const reinitialiserMotDePasse = async (requete, reponse) => {
-  const { email, codeReset, nouveauMotDePasse, motDePasseActuel } = requete.body;
+  const { email, codeReset, nouveauMotDePasse } = requete.body;
 
   try {
-    // Hacher le codeReset reçu dans la requête avant la comparaison
-    const hashedCodeReset = crypto.createHash('sha256').update(codeReset).digest('hex');
+    // Hasher le code de réinitialisation pour comparer avec celui stocké
+    const hashCode = crypto.createHash('sha256').update(codeReset).digest('hex');
 
-    // Chercher l'utilisateur dans les modèles Prestataire et Client
     let utilisateur = await Prestataire.findOne({
       email,
-      codeReset: hashedCodeReset, // Comparer avec le code haché
-      codeResetExpire: { $gt: Date.now() }, // Vérifier que le code n'est pas expiré
+      codeReset: hashCode,
+      codeResetExpire: { $gt: Date.now() },
     });
 
     if (!utilisateur) {
       utilisateur = await Client.findOne({
         email,
-        codeReset: hashedCodeReset, // Comparer avec le code haché
-        codeResetExpire: { $gt: Date.now() }, // Vérifier que le code n'est pas expiré
+        codeReset: hashCode,
+        codeResetExpire: { $gt: Date.now() },
       });
     }
 
@@ -76,27 +75,21 @@ const reinitialiserMotDePasse = async (requete, reponse) => {
       return reponse.status(400).json({ message: 'Code invalide ou expiré.' });
     }
 
-    // Vérification du mot de passe actuel (si fourni)
-    if (motDePasseActuel) {
-      const passwordMatch = await bcrypt.compare(motDePasseActuel, utilisateur.motDePasse);
-      if (!passwordMatch) {
-        return reponse.status(400).json({ message: 'Mot de passe actuel incorrect.' });
-      }
-    }
+    // Hasher le nouveau mot de passe
+    const motDePasseHash = await bcrypt.hash(nouveauMotDePasse, 10);
+    utilisateur.motDePasse = motDePasseHash;
 
-    // Hachage du nouveau mot de passe
-    utilisateur.motDePasse = await bcrypt.hash(nouveauMotDePasse, 10);
-    utilisateur.codeReset = undefined; 
-    utilisateur.codeResetExpire = undefined; 
+    // Supprimer le code de réinitialisation
+    utilisateur.codeReset = undefined;
+    utilisateur.codeResetExpire = undefined;
     await utilisateur.save();
 
     reponse.json({ message: 'Mot de passe réinitialisé avec succès.' });
   } catch (erreur) {
     console.error(erreur);
-    reponse.status(500).json({ message: 'Erreur lors de la réinitialisation.' });
+    reponse.status(500).json({ message: 'Erreur lors de la réinitialisation du mot de passe.' });
   }
 };
-
 
 module.exports = {
   demanderReinitialisationMotDePasse,
