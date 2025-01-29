@@ -88,9 +88,36 @@ const listerPrestataires = async (req, res) => {
   }
 };
 
+const supprimerDemandeReservation = async (req, res) => {
+  const { demandeId } = req.params; // Récupérer l'ID de la demande de réservation à supprimer
+
+  try {
+    // Vérifier si la demande existe
+    const demande = await ReservationRequest.findById(demandeId);
+    if (!demande) {
+      return res.status(404).json({ message: 'Demande non trouvée.' });
+    }
+
+    // Vérifier si le prestataire est celui auquel la demande appartient
+    if (demande.prestataireId.toString() !== req.utilisateur._id.toString()) {
+      return res.status(403).json({ message: 'Vous n\'êtes pas autorisé à supprimer cette demande.' });
+    }
+
+    // Supprimer la demande
+    await demande.deleteOne();
+
+    res.status(200).json({ message: 'Demande supprimée avec succès.' });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la demande :", error.message);
+    res.status(500).json({ message: 'Erreur interne du serveur.' });
+  }
+};
+
+
 module.exports = {
   inscriptionPrestataire,
   profilPrestataire,
   listerPrestataires, 
+  supprimerDemandeReservation,
 };
 

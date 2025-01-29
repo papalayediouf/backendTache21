@@ -2,7 +2,8 @@ const express = require('express');
 const { 
   inscriptionPrestataire, 
   profilPrestataire, 
-  listerPrestataires // Importation de la nouvelle fonction
+  listerPrestataires, 
+  supprimerDemandeReservation // Importation de la fonction de suppression
 } = require('../controllers/controleurdevenirPrestataire');
 const { verifierToken } = require('../middlewares/authentification'); 
 
@@ -16,5 +17,8 @@ router.get('/profil-prestataire', verifierToken, profilPrestataire);
 
 // Route pour lister tous les prestataires (accessible sans authentification)
 router.get('/liste-prestataires', listerPrestataires);
+
+// Route pour supprimer une demande de réservation (protégée par l'authentification)
+router.delete('/demandes/:demandeId', verifierToken, supprimerDemandeReservation);
 
 module.exports = router;
