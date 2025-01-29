@@ -1,6 +1,6 @@
 const express = require('express');
 const { inscriptionPrestataire, profilPrestataire } = require('../controllers/controleurdevenirPrestataire');
-// const { verifierToken } = require('../middlewares/authentification'); // Assurez-vous que ce middleware est présent pour protéger la route
+const { verifierToken } = require('../middlewares/authentification'); 
 
 const router = express.Router();
 
@@ -8,6 +8,6 @@ const router = express.Router();
 router.post('/inscription-prestataire', inscriptionPrestataire);
 
 // Route pour récupérer le profil d'un prestataire (protégée par l'authentification)
-router.get('/profil-prestataire',  profilPrestataire);
+router.get('/profil-prestataire', verifierToken, profilPrestataire);
 
 module.exports = router;
