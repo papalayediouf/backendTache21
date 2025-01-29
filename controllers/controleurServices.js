@@ -1,3 +1,5 @@
+//backendTache21/controllers/controleurServices.js
+
 const Service = require("../models/serviceModele");
 const mongoose = require("mongoose");
 
@@ -10,7 +12,7 @@ const ajouterService = async (req, res) => {
      
     } = req.body;
 
-    // Récupérer et formater les chemins des images
+    // Vérification si les fichiers sont présents
     const imageService = req.files?.imageService?.[0]?.path
       ? req.files.imageService[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/")
       : null;
