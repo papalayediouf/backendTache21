@@ -77,7 +77,20 @@ const profilPrestataire = async (req, res) => {
   }
 };
 
+// Lister tous les prestataires
+const listerPrestataires = async (req, res) => {
+  try {
+    const prestataires = await Prestataire.find().select('-motDePasse'); // Exclure le mot de passe
+    res.status(200).json(prestataires);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des prestataires :", error);
+    res.status(500).json({ message: "Erreur interne du serveur." });
+  }
+};
+
 module.exports = {
   inscriptionPrestataire,
   profilPrestataire,
+  listerPrestataires, 
 };
+
