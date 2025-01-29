@@ -19,7 +19,7 @@ const connectDB = async () => {
 // Fonction pour ajouter un admin par défaut
 const creerAdminParDefaut = async () => {
     try {
-        const adminExistant = await Admin.findOne({ email: 'papalayediouf17@gmail.com' });
+        const adminExistant = await Admin.findOne({ email: 'soilihiambdouroihmane@gmail.com' });
         console.log('Admin existant:', adminExistant);  // Ajoute un log pour vérifier si l'admin existe déjà
 
         if (!adminExistant) {
