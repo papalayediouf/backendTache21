@@ -29,7 +29,7 @@ const creerAdminParDefaut = async () => {
 
             const nouvelAdmin = new Admin({
                 nom: 'Administrateur',
-                email: 'papalayediouf17@gmail.com',
+                email: 'soilihiambdouroihmane@gmail.com',
                 motDePasse: motDePasseHash,
             });
 
