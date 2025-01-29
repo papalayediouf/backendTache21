@@ -11,11 +11,11 @@ const ajouterService = async (req, res) => {
 
     // Récupérer et formater les chemins des images
     const imageService = req.files?.imageService?.[0]?.path
-      ? req.files.imageService[0].path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/")
+      ? req.files.imageService[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/")
       : null;
 
     const imageDiplomes = req.files?.imageDiplomes?.[0]?.path
-      ? req.files.imageDiplomes[0].path.replace("C:/Dev/'Tache 21 Test'/backend", "").replace(/\\/g, "/")
+      ? req.files.imageDiplomes[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/")
       : null;
 
     // Vérification des champs requis
