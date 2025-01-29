@@ -7,6 +7,7 @@ const ajouterService = async (req, res) => {
       nomDeservice,
       categorie,
       descriptionDeService,
+     
     } = req.body;
 
     // Récupérer et formater les chemins des images
@@ -19,7 +20,7 @@ const ajouterService = async (req, res) => {
       : null;
 
     // Vérification des champs requis
-    if (!nomDeservice || !categorie || !descriptionDeService) {
+    if (!nomDeservice || !categorie || !descriptionDeService , !imageService ) {
       return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
     }
 
