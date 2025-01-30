@@ -72,6 +72,7 @@ const profilPrestataire = async (req, res) => {
     // Retourner les informations du profil
     res.json({
       prestataire: {
+        id: prestataire._id,
         nom: prestataire.nom,
         prenom: prestataire.prenom,
         email: prestataire.email,
