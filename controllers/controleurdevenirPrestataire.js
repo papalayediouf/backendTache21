@@ -62,16 +62,24 @@ const inscriptionPrestataire = async (req, res) => {
 
 // Récupérer le profil du prestataire  
 const profilPrestataire = async (req, res) => {
-  const { id } = req.utilisateur;
   try {
-    // Trouver le prestataire par son ID (qui est dans le token JWT)
-    const prestataire = await Prestataire.findById(req.utilisateur._id).select('-motDePasse'); 
+    // Vérifier si l'utilisateur est bien authentifié
+    if (!req.utilisateur || !req.utilisateur._id) {
+      return res.status(401).json({ message: 'Accès non autorisé.' });
+    }
+
+    // Récupérer l'ID depuis le token JWT
+    const id = req.utilisateur._id;
+
+    // Trouver le prestataire par son ID (sans le mot de passe)
+    const prestataire = await Prestataire.findById(id).select('-motDePasse');
+
     if (!prestataire) {
       return res.status(404).json({ message: 'Prestataire non trouvé.' });
     }
 
     // Retourner les informations du profil
-    res.json({
+    return res.status(200).json({
       prestataire: {
         id: prestataire._id,
         nom: prestataire.nom,
@@ -86,7 +94,7 @@ const profilPrestataire = async (req, res) => {
     });
   } catch (erreur) {
     console.error("Erreur lors de la récupération du profil :", erreur);
-    res.status(500).json({ message: 'Erreur interne du serveur.' });
+    return res.status(500).json({ message: 'Erreur interne du serveur.' });
   }
 };
 
