@@ -76,13 +76,16 @@ const obtenirClient = async (req, res) => {
 };
 
 const mettreAJourClient = async (req, res) => {
+
+  const { nom, prenom, email } = req.body;
+  const id = req.utilisateur._id; 
+
   // Vérifier que l'utilisateur est bien authentifié
   if (!req.utilisateur || !req.utilisateur._id) {
     return res.status(400).json({ message: "ID utilisateur manquant." });
   }
 
-  const { nom, prenom, email } = req.body;
-  const id = req.utilisateur._id; // ID récupéré depuis le token JWT
+  // ID récupéré depuis le token JWT
 
   try {
     // Vérifier si des données sont envoyées pour la mise à jour
