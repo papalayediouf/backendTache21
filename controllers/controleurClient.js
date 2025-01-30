@@ -75,45 +75,32 @@ const obtenirClient = async (req, res) => {
   }
 };
 
+// **Mettre à jour les informations du client**
 const mettreAJourClient = async (req, res) => {
-
+  const { id } = req.utilisateur; // ID récupéré depuis le middleware
   const { nom, prenom, email } = req.body;
-  const id = req.utilisateur._id; 
-
-  // Vérifier que l'utilisateur est bien authentifié
-  if (!req.utilisateur || !req.utilisateur._id) {
-    return res.status(400).json({ message: "ID utilisateur manquant." });
-  }
-
-  // ID récupéré depuis le token JWT
 
   try {
-    // Vérifier si des données sont envoyées pour la mise à jour
-    if (!nom && !prenom && !email) {
-      return res.status(400).json({ message: "Aucune donnée fournie pour la mise à jour." });
-    }
-
     const client = await Client.findById(id);
 
     if (!client) {
       return res.status(404).json({ message: "Client non trouvé." });
     }
 
-    // Mise à jour des champs
-    if (nom) client.nom = nom;
-    if (prenom) client.prenom = prenom;
-    if (email) client.email = email;
+    client.nom = nom || client.nom;
+    client.prenom = prenom || client.prenom;
+    client.email = email || client.email;
 
     await client.save();
 
     res.status(200).json({
       message: "Informations du client mises à jour avec succès.",
       client: {
-        id: client._id,
+        // id: client._id,
         nom: client.nom,
         prenom: client.prenom,
         email: client.email,
-        role: client.role,
+        // role: client.role,
       },
     });
   } catch (error) {
@@ -121,7 +108,6 @@ const mettreAJourClient = async (req, res) => {
     res.status(500).json({ message: "Erreur interne du serveur." });
   }
 };
-
 
 // **Supprimer un compte client**
 const supprimerCompteClient = async (req, res) => {
