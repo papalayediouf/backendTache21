@@ -57,7 +57,7 @@ routeur.get('/prestataire/services', verifierToken, verifierRole(['prestataire']
       return reponse.status(404).json({ message: 'Aucun service trouvé.' });
     }
 
-    reponse.json({ services });
+    reponse.json({ prestataire });
   } catch (erreur) {
     console.error(erreur);
     reponse.status(500).json({ message: 'Erreur lors de la récupération des services.' });

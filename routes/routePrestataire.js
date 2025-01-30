@@ -10,4 +10,5 @@ router.post('/inscription-prestataire', inscriptionPrestataire);
 // Route pour récupérer le profil d'un prestataire (protégée par l'authentification)
 router.get('/profil-prestataire', verifierToken, profilPrestataire);
 
+
 module.exports = router;

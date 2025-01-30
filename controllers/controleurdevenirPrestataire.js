@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const Prestataire = require('../models/prestataireModele');
+const Client = require('../models/clientModele');
 
 // Inscription d'un prestataire
 const inscriptionPrestataire = async (req, res) => {
@@ -8,6 +9,20 @@ const inscriptionPrestataire = async (req, res) => {
   try {
     // Vérifier si un prestataire existe déjà avec cet email
     const prestataireExistant = await Prestataire.findOne({ email });
+    const clientExistant = await Client.findOne({ email });
+    console.log("Client trouvé :", clientExistant);
+
+  
+
+    // Supprimer le compte client si un client avec cet email existe
+    if (clientExistant) {
+      console.log(`Client trouvé : ${clientExistant.email}`);
+      await Client.findOneAndDelete({ email });
+      console.log(`Client avec l'email ${email} a été supprimé.`);
+    } else {
+      console.log(`Aucun client trouvé avec l'email ${email}`);
+    }
+
     if (prestataireExistant) {
       return res.status(400).json({ message: "Un prestataire avec cet email existe déjà." });
     }
@@ -43,6 +58,7 @@ const inscriptionPrestataire = async (req, res) => {
         description: prestataire.description,
       },
     });
+
   } catch (error) {
     console.error("Erreur lors de l'inscription :", error.message);
     res.status(500).json({ message: "Erreur interne du serveur." });
@@ -53,7 +69,7 @@ const inscriptionPrestataire = async (req, res) => {
 const profilPrestataire = async (req, res) => {
   try {
     // Trouver le prestataire par son ID (qui est dans le token JWT)
-    const prestataire = await Prestataire.findById(req.utilisateur._id).select('-motDePasse'); 
+    const prestataire = await Prestataire.findById(req.utilisateur._id).select('-motDePasse');
     if (!prestataire) {
       return res.status(404).json({ message: 'Prestataire non trouvé.' });
     }
