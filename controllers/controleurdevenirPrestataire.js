@@ -62,6 +62,7 @@ const inscriptionPrestataire = async (req, res) => {
 
 // Récupérer le profil du prestataire  
 const profilPrestataire = async (req, res) => {
+  const { id } = req.utilisateur;
   try {
     // Trouver le prestataire par son ID (qui est dans le token JWT)
     const prestataire = await Prestataire.findById(req.utilisateur._id).select('-motDePasse'); 
