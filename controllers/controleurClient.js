@@ -96,11 +96,11 @@ const mettreAJourClient = async (req, res) => {
     res.status(200).json({
       message: "Informations du client mises à jour avec succès.",
       client: {
-        // id: client._id,
+        
         nom: client.nom,
         prenom: client.prenom,
         email: client.email,
-        // role: client.role,
+       
       },
     });
   } catch (error) {
