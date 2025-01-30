@@ -1,7 +1,10 @@
 const bcrypt = require('bcryptjs');
 const Prestataire = require('../models/prestataireModele');
+const Client = require('../models/clientModele');
+
 
 // Inscription d'un prestataire
+
 const inscriptionPrestataire = async (req, res) => {
   const { nom, prenom, email, telephone, motDePasse, nomDeLentreprise, region, departement, description } = req.body;
 
@@ -12,7 +15,10 @@ const inscriptionPrestataire = async (req, res) => {
       return res.status(400).json({ message: "Un prestataire avec cet email existe déjà." });
     }
 
-    // Créer un nouvel prestataire
+    // Vérifier si l'utilisateur est un client existant
+    const clientExistant = await Client.findOne({ email });
+
+    // Créer un nouveau prestataire
     const prestataire = new Prestataire({
       nom,
       prenom,
@@ -28,6 +34,12 @@ const inscriptionPrestataire = async (req, res) => {
     // Sauvegarder le prestataire dans la base de données
     await prestataire.save();
 
+    // Si un client existant est trouvé, supprimer son compte
+    if (clientExistant) {
+      await Client.deleteOne({ email });
+      console.log(`Compte client supprimé pour l'email : ${email}`);
+    }
+
     res.status(201).json({
       message: "Inscription réussie. Vous êtes maintenant un prestataire.",
       prestataire: {
@@ -36,7 +48,6 @@ const inscriptionPrestataire = async (req, res) => {
         prenom: prestataire.prenom,
         email: prestataire.email,
         telephone: prestataire.telephone,
-        motDePasse: prestataire.motDePasse,
         nomDeLentreprise: prestataire.nomDeLentreprise,
         region: prestataire.region,
         departement: prestataire.departement,
@@ -49,7 +60,7 @@ const inscriptionPrestataire = async (req, res) => {
   }
 };
 
-// Récupérer le profil du prestataire
+// Récupérer le profil du prestataire  
 const profilPrestataire = async (req, res) => {
   try {
     // Trouver le prestataire par son ID (qui est dans le token JWT)

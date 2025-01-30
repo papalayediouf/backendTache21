@@ -23,7 +23,7 @@ const creerAdminParDefaut = async () => {
         console.log('Admin existant:', adminExistant);  // Ajoute un log pour vérifier si l'admin existe déjà
 
         if (!adminExistant) {
-            const motDePasse = '1234';
+            const motDePasse = '123456';
             const salt = await bcrypt.genSalt(10);
             const motDePasseHash = await bcrypt.hash(motDePasse, salt);
 
