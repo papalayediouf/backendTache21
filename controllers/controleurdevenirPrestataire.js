@@ -11,7 +11,7 @@ const inscriptionPrestataire = async (req, res) => {
     if (prestataireExistant) {
       return res.status(400).json({ message: "Un prestataire avec cet email existe déjà." });
     }
-
+  
     // Créer un nouvel prestataire
     const prestataire = new Prestataire({
       nom,
