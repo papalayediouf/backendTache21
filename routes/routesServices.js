@@ -35,7 +35,7 @@ router.get('/tous-les-services', async (req, res) => {
 
     const servicesWithImageUrls = services.map(service => ({
       ...service.toObject(),
-      imageUrl: `http://localhost:5000/uploads/images/${service.imageService}`,  
+      imageUrl: `https://backendtache21.onrender.com/uploads/images/${service.imageService}`,  
     }));
 
     res.status(200).json(servicesWithImageUrls);
