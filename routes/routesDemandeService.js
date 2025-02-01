@@ -11,11 +11,7 @@ const {
 
 const routeur = express.Router();
 
-/**
- * @route POST /api/demandes
- * @description Créer une nouvelle demande de service (uniquement pour les clients)
- * @access Privé (Client uniquement)
- */
+
 routeur.post(
   '/demande',
   verifierToken,
@@ -23,11 +19,7 @@ routeur.post(
   creerDemandeService
 );
 
-/**
- * @route GET /api/demandes/client
- * @description Obtenir toutes les demandes créées par le client connecté
- * @access Privé (Client uniquement)
- */
+
 routeur.get(
   '/client',
   verifierToken,
@@ -35,11 +27,7 @@ routeur.get(
   obtenirDemandesParClient
 );
 
-/**
- * @route GET /api/demandes/prestataire
- * @description Obtenir toutes les demandes assignées au prestataire connecté
- * @access Privé (Prestataire uniquement)
- */
+
 routeur.get(
   '/prestataire',
   verifierToken,
@@ -47,11 +35,7 @@ routeur.get(
   obtenirDemandesParPrestataire
 );
 
-/**
- * @route PUT /api/demandes/:id/statut
- * @description Mettre à jour le statut d'une demande de service
- * @access Privé (Prestataire uniquement)
- */
+
 routeur.put(
   '/:id/statut',
   verifierToken,

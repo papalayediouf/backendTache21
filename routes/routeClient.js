@@ -1,3 +1,4 @@
+//backendTache21/routes/routeClient.js
 const express = require('express');
 const {
   inscriptionClient,
@@ -20,5 +21,6 @@ router.get('/profil-client', verifierToken, verifieRole(['client']), obtenirClie
 router.put('/mettre-a-jour-client',verifierToken, verifieRole(['client']), mettreAJourClient);
 
 router.get('/liste-clients', verifierToken, verifieRole(['admin']), listeClients);
+
 
 module.exports = router;

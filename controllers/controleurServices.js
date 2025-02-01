@@ -37,7 +37,25 @@ const ajouterService = async (req, res) => {
 };
 
 
-//backendTache21/controllers/controleurServices.js
+const obtenirTousLesServices = async (req, res) => {
+  try {
+    // Récupérer tous les services avec les informations des prestataires
+    const services = await Service.find().populate("prestataire", "-motDePasse");
+
+    // Ajouter l'URL complète de l'image pour chaque service
+    const servicesWithImageUrls = services.map(service => ({
+      ...service.toObject(),
+      imageUrl: `https://backendtache21.onrender.com/uploads/images/${service.imageService}`,
+    }));
+
+    res.status(200).json(servicesWithImageUrls);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des services :", err);
+    res.status(500).json({ message: "Erreur lors de la récupération des services" });
+  }
+};
+
+
 const obtenirDetailService = async (req, res) => {
   try {
     const { id } = req.params;  // Récupérer l'ID du service depuis les paramètres de l'URL
@@ -63,4 +81,8 @@ const obtenirDetailService = async (req, res) => {
   }
 };
 
-module.exports = { ajouterService, obtenirDetailService };
+
+
+
+
+module.exports = { ajouterService, obtenirDetailService , obtenirTousLesServices};

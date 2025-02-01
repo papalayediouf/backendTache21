@@ -1,3 +1,4 @@
+//backendTache21/controllers/controleurdevenirPrestataire.js
 const bcrypt = require('bcryptjs');
 const Prestataire = require('../models/prestataireModele');
 const Client = require('../models/clientModele');
@@ -91,6 +92,56 @@ const profilPrestataire = async (req, res) => {
   }
 };
 
+//modifier le profil du prestataire
+const modifierProfilPrestataire = async (req, res) => {
+  const { id } = req.utilisateur; // Récupérer l'ID du prestataire connecté
+  const { nom, prenom, telephone, nomDeLentreprise, region, departement, description, motDePasse } = req.body;
+
+  try {
+    // Vérifier si le prestataire existe
+    const prestataire = await Prestataire.findById(id);
+    if (!prestataire) {
+      return res.status(404).json({ message: "Prestataire non trouvé." });
+    }
+
+    // Mettre à jour les champs fournis
+    if (nom) prestataire.nom = nom;
+    if (prenom) prestataire.prenom = prenom;
+    if (telephone) prestataire.telephone = telephone;
+    if (nomDeLentreprise) prestataire.nomDeLentreprise = nomDeLentreprise;
+    if (region) prestataire.region = region;
+    if (departement) prestataire.departement = departement;
+    if (description) prestataire.description = description;
+
+    // Si l'utilisateur veut modifier son mot de passe
+    if (motDePasse) {
+      prestataire.motDePasse = await bcrypt.hash(motDePasse, 10);
+    }
+
+    // Sauvegarde des modifications
+    await prestataire.save();
+
+    res.status(200).json({
+      message: "Profil mis à jour avec succès.",
+      prestataire: {
+        id: prestataire._id,
+        nom: prestataire.nom,
+        prenom: prestataire.prenom,
+        email: prestataire.email,
+        telephone: prestataire.telephone,
+        nomDeLentreprise: prestataire.nomDeLentreprise,
+        region: prestataire.region,
+        departement: prestataire.departement,
+        description: prestataire.description,
+      },
+    });
+  } catch (erreur) {
+    console.error("Erreur lors de la modification du profil :", erreur);
+    res.status(500).json({ message: "Erreur interne du serveur." });
+  }
+};
+
+
 // Lister tous les prestataires
 const listerPrestataires = async (req, res) => {
   try {
@@ -131,6 +182,7 @@ const supprimerDemandeReservation = async (req, res) => {
 module.exports = {
   inscriptionPrestataire,
   profilPrestataire,
+  modifierProfilPrestataire,
   listerPrestataires, 
   supprimerDemandeReservation,
 };

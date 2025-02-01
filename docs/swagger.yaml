@@ -26,7 +26,6 @@ paths:
       summary: Connexion d'un utilisateur
       tags:
         - Utilisateur
-        
       requestBody:
         required: true
         content:
@@ -50,56 +49,113 @@ paths:
           description: Email ou mot de passe invalide.
 
 ### Clients###
+
   /api/clients/inscription-client:
     post:
       summary: Inscription d'un nouveau client
+      description: Permet à un utilisateur de s'inscrire en tant que client.
       tags:
-        - Client
+        - Clients
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - email
-                - mot_de_passe
-                - nom
               properties:
-                email:
-                  type: string
-                  description: Email du client.
-                mot_de_passe:
-                  type: string
-                  description: Mot de passe du client.
                 nom:
                   type: string
-                  description: Nom complet du client.
+                  example: "Dupont"
+                prenom:
+                  type: string
+                  example: "Jean"
+                email:
+                  type: string
+                  example: "jean.dupont@example.com"
+                motDePasse:
+                  type: string
+                  example: "MotDePasse123!"
       responses:
         201:
-          description: Client créé avec succès.
-        400:
-          description: Erreur de validation ou email déjà utilisé.
+          description: Client inscrit avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Client inscrit avec succès."
+                  client:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "65b1a2c34e5f7a1234567890"
+                      nom:
+                        type: string
+                        example: "Dupont"
+                      prenom:
+                        type: string
+                        example: "Jean"
+                      email:
+                        type: string
+                        example: "jean.dupont@example.com"
+                      role:
+                        type: string
+                        example: "client"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR..."
 
- 
+        400:
+          description: Un client avec cet email existe déjà.
+        500:
+          description: Erreur interne du serveur.
+
   /api/clients/profil-client:
     get:
-      summary: Récupérer le profil du client connecté
+      summary: Récupérer les informations du client connecté
+      description: Retourne les informations du client en fonction du token JWT.
       tags:
-        - Client
+        - Clients
       security:
         - bearerAuth: []
       responses:
         200:
-          description: Profil du client récupéré avec succès.
+          description: Détails du client récupérés avec succès.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "65b1a2c34e5f7a1234567890"
+                  nom:
+                    type: string
+                    example: "Dupont"
+                  prenom:
+                    type: string
+                    example: "Jean"
+                  email:
+                    type: string
+                    example: "jean.dupont@example.com"
+                  role:
+                    type: string
+                    example: "client"
+
         401:
-          description: Utilisateur non authentifié.
+          description: Accès refusé, token manquant ou invalide.
+        404:
+          description: Client non trouvé.
 
   /api/clients/mettre-a-jour-client:
     put:
-      summary: Mettre à jour les informations du client connecté
+      summary: Mettre à jour les informations du client
+      description: Permet au client de modifier ses informations personnelles.
       tags:
-        - Client
+        - Clients
       security:
         - bearerAuth: []
       requestBody:
@@ -109,43 +165,96 @@ paths:
             schema:
               type: object
               properties:
-                email:
-                  type: string
-                  description: Nouvel email du client.
                 nom:
                   type: string
-                  description: Nouveau nom du client.
-                mot_de_passe:
+                  example: "Dupont"
+                prenom:
                   type: string
-                  description: Nouveau mot de passe du client.
+                  example: "Jean"
+                email:
+                  type: string
+                  example: "jean.dupont@example.com"
       responses:
         200:
-          description: Informations du client mises à jour avec succès.
-        401:
-          description: Utilisateur non authentifié.
-        400:
-          description: Données invalides.
+          description: Informations mises à jour avec succès.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Informations du client mises à jour avec succès."
+                  client:
+                    type: object
+                    properties:
+                      nom:
+                        type: string
+                        example: "Dupont"
+                      prenom:
+                        type: string
+                        example: "Jean"
+                      email:
+                        type: string
+                        example: "jean.dupont@example.com"
 
-  /api/client/liste-clients:
+        401:
+          description: Accès refusé, token manquant ou invalide.
+        404:
+          description: Client non trouvé.
+        500:
+          description: Erreur interne du serveur.
+
+  /api/clients/liste-clients:
     get:
-      summary: Récupérer la liste de tous les clients (par l'admin)
+      summary: Liste de tous les clients (Admin uniquement)
+      description: Permet à l'admin de voir tous les clients inscrits.
       tags:
-        - Admin
-        - Client
+        - Clients
       security:
         - bearerAuth: []
       responses:
         200:
           description: Liste des clients récupérée avec succès.
-        401:
-          description: Utilisateur non authentifié ou accès interdit.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "65b1a2c34e5f7a1234567890"
+                    nom:
+                      type: string
+                      example: "Dupont"
+                    prenom:
+                      type: string
+                      example: "Jean"
+                    email:
+                      type: string
+                      example: "jean.dupont@example.com"
+                    role:
+                      type: string
+                      example: "client"
 
-### Prestataire ###
+        401:
+          description: Accès refusé, token manquant ou invalide.
+        403:
+          description: Accès interdit (rôle insuffisant).
+        500:
+          description: Erreur interne du serveur.
+
+
+
+### Prestataires ###
+
   /api/prestataires/inscription-prestataire:
     post:
-      summary: Inscription d'un prestataire
+      summary: Inscription d'un nouveau prestataire
       tags:
-        - Prestataire
+        - Prestataires
       requestBody:
         required: true
         content:
@@ -153,98 +262,147 @@ paths:
             schema:
               type: object
               required:
-                - email
-                - mot_de_passe
                 - nom
+                - prenom
+                - email
+                - telephone
+                - motDePasse
+                - nomDeLentreprise
+                - region
+                - departement
               properties:
-                email:
-                  type: string
-                  description: Email du prestataire.
-                mot_de_passe:
-                  type: string
-                  description: Mot de passe du prestataire.
                 nom:
                   type: string
-                  description: Nom complet du prestataire.
+                  description: Nom du prestataire.
+                prenom:
+                  type: string
+                  description: Prénom du prestataire.
+                email:
+                  type: string
+                  format: email
+                  description: Adresse email unique du prestataire.
+                telephone:
+                  type: string
+                  description: Numéro de téléphone du prestataire.
+                motDePasse:
+                  type: string
+                  format: password
+                  description: Mot de passe sécurisé.
+                nomDeLentreprise:
+                  type: string
+                  description: Nom de l'entreprise du prestataire.
+                region:
+                  type: string
+                  description: Région du prestataire.
+                departement:
+                  type: string
+                  description: Département du prestataire.
+                description:
+                  type: string
+                  description: Description des services du prestataire.
       responses:
         201:
-          description: Prestataire créé avec succès.
+          description: Inscription réussie.
         400:
-          description: Erreur de validation ou email déjà utilisé.
-
- 
-  /api/prestataires/devenir-prestataire:
-    post:
-      summary: Devenir prestataire pour un utilisateur déjà inscrit
-      tags:
-        - Prestataire
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                details:
-                  type: string
-                  description: Détails sur la conversion du client en prestataire.
-      responses:
-        200:
-          description: Utilisateur devenu prestataire avec succès.
-        403:
-          description: Utilisateur non autorisé à devenir prestataire.
+          description: L'email est déjà utilisé.
+        500:
+          description: Erreur interne du serveur.
 
   /api/prestataires/profil-prestataire:
     get:
-      summary: Récupérer les informations du profil d'un prestataire connecté
+      summary: Récupérer le profil du prestataire connecté
       tags:
-        - Prestataire
+        - Prestataires
       security:
         - bearerAuth: []
       responses:
         200:
-          description: Profil du prestataire récupéré avec succès.
-        401:
-          description: Utilisateur non authentifié.
+          description: Profil récupéré avec succès.
+        404:
+          description: Prestataire non trouvé.
+        500:
+          description: Erreur interne du serveur.
 
   /api/prestataires/mettre-a-jour-prestataire:
     put:
-      summary: Mettre à jour les informations du prestataire connecté
+      summary: Modifier le profil du prestataire connecté
       tags:
-        - Prestataire
+        - Prestataires
       security:
         - bearerAuth: []
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
               type: object
               properties:
-                email:
-                  type: string
-                  description: Nouvel email du prestataire.
                 nom:
                   type: string
-                  description: Nouveau nom du prestataire.
-                mot_de_passe:
+                prenom:
                   type: string
-                  description: Nouveau mot de passe du prestataire.
+                telephone:
+                  type: string
+                nomDeLentreprise:
+                  type: string
+                region:
+                  type: string
+                departement:
+                  type: string
+                description:
+                  type: string
+                motDePasse:
+                  type: string
+                  format: password
       responses:
         200:
-          description: Informations du prestataire mises à jour avec succès.
-        401:
-          description: Utilisateur non authentifié.
-        400:
-          description: Données invalides.
+          description: Profil mis à jour avec succès.
+        404:
+          description: Prestataire non trouvé.
+        500:
+          description: Erreur interne du serveur.
+
+  /api/prestataires/liste-prestataires:
+    get:
+      summary: Lister tous les prestataires
+      tags:
+        - Prestataires
+      responses:
+        200:
+          description: Liste des prestataires récupérée avec succès.
+        500:
+          description: Erreur interne du serveur.
+
+  /api/prestataires/demandes/{demandeId}:
+    delete:
+      summary: Supprimer une demande de réservation par le prestataire concerné
+      tags:
+        - Prestataires
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: demandeId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la demande de réservation à supprimer.
+      responses:
+        200:
+          description: Demande supprimée avec succès.
+        403:
+          description: Accès interdit.
+        404:
+          description: Demande non trouvée.
+        500:
+          description: Erreur interne du serveur.
 
 
-  ### Services ###
+ ### Services ###
+
   /api/services/ajouter:
     post:
-      summary: Ajouter un service (uniquement pour les prestataires)
+      summary: Ajouter un nouveau service
       tags:
         - Services
       security:
@@ -256,46 +414,75 @@ paths:
             schema:
               type: object
               required:
-                - titre services
-                - description
-                - categories
-                - imageServices
-                - imageCertificat
+                - nomDeservice
+                - categorie
+                - descriptionDeService
               properties:
-                titre:
+                nomDeservice:
                   type: string
-                  description: Titre du service.
-                description:
+                  description: Nom du service proposé.
+                categorie:
+                  type: string
+                  description: Catégorie du service.
+                descriptionDeService:
                   type: string
                   description: Description détaillée du service.
-                prix:
-                  type: number
-                  description: Prix du service.
-                image:
+                imageService:
                   type: string
                   format: binary
-                  description: Image associée au service.
+                  description: Image illustrant le service.
+                imageDiplomes:
+                  type: string
+                  format: binary
+                  description: Image des diplômes ou certifications éventuelles.
       responses:
         201:
-          description: Service créé avec succès.
-        403:
-          description: Accès refusé (non prestataire).
+          description: Service ajouté avec succès.
+        400:
+          description: Données manquantes ou invalides.
+        500:
+          description: Erreur interne du serveur.
 
   /api/services/tous-les-services:
     get:
-      summary: Récupérer tous les services
+      summary: Obtenir la liste de tous les services avec leurs prestataires
       tags:
         - Services
       responses:
         200:
           description: Liste des services récupérée avec succès.
+        500:
+          description: Erreur lors de la récupération des services.
 
-  ### Demandes de services ###
-  /api/demandes-services:
-    post:
-      summary: Créer une nouvelle demande de service
+  /api/services/{id}:
+    get:
+      summary: Obtenir les détails d'un service spécifique
       tags:
-        - Demandes de services
+        - Services
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du service à récupérer.
+      responses:
+        200:
+          description: Détails du service récupérés avec succès.
+        400:
+          description: ID invalide.
+        404:
+          description: Service non trouvé.
+        500:
+          description: Erreur interne du serveur.
+
+### Demande de Service ###
+
+  /api/demandes-services/demande:
+    post:
+      summary: Créer une demande de service et l'envoyer à un prestataire
+      tags:
+        - Demande de Service
       security:
         - bearerAuth: []
       requestBody:
@@ -319,64 +506,66 @@ paths:
                   description: Numéro de téléphone du client.
                 descriptionAdresse:
                   type: string
-                  description: Adresse détaillée du client.
+                  description: Adresse et description du lieu d'intervention.
                 date:
                   type: string
-                  format: date-time
-                  description: Date et heure souhaitées pour le service.
+                  format: date
+                  description: Date prévue pour la prestation.
                 prestataireId:
                   type: string
-                  description: ID du prestataire sélectionné.
+                  description: Identifiant du prestataire cible.
       responses:
         201:
-          description: Demande de service créée avec succès.
+          description: Demande de service créée et envoyée avec succès.
         400:
           description: Données manquantes ou invalides.
         404:
-          description: Prestataire introuvable ou non valide.
+          description: Prestataire non trouvé ou rôle invalide.
+        500:
+          description: Erreur interne du serveur.
 
   /api/demandes-services/client:
     get:
-      summary: Récupérer les demandes d'un client connecté
+      summary: Obtenir les demandes du client connecté
       tags:
-        - Demandes de services
+        - Demande de Service
       security:
         - bearerAuth: []
       responses:
         200:
-          description: Liste des demandes récupérée avec succès.
-        401:
-          description: Utilisateur non authentifié.
+          description: Liste des demandes du client récupérée avec succès.
+        500:
+          description: Erreur interne du serveur.
 
   /api/demandes-services/prestataire:
     get:
-      summary: Récupérer les demandes assignées à un prestataire connecté
+      summary: Obtenir les demandes du prestataire connecté
       tags:
-        - Demandes de services
+        - Demande de Service
       security:
         - bearerAuth: []
       responses:
         200:
-          description: Liste des demandes récupérée avec succès.
+          description: Liste des demandes du prestataire récupérée avec succès.
         403:
-          description: Accès interdit (non prestataire).
-        401:
-          description: Utilisateur non authentifié.
+          description: Accès interdit, l'utilisateur n'est pas un prestataire.
+        500:
+          description: Erreur interne du serveur.
 
-  /api/demandes-services/{idDemande}/statut:
+  /api/demandes-services/{id}/statut:
     put:
       summary: Mettre à jour le statut d'une demande de service
       tags:
-        - Demandes de services
+        - Demande de Service
       security:
         - bearerAuth: []
       parameters:
-        - in: path
-          name: idDemande
+        - name: id
+          in: path
           required: true
           schema:
             type: string
-          description: ID de la demande de service.
+          description: Identifiant de la demande à mettre à jour.
       requestBody:
         required: true
         content:
@@ -388,10 +577,7 @@ paths:
               properties:
                 statut:
                   type: string
-                  enum:
-                    - acceptée
-                    - refusée
-                    - terminée
+                  enum: [acceptée, refusée, terminée]
                   description: Nouveau statut de la demande.
       responses:
         200:
@@ -400,78 +586,126 @@ paths:
           description: Statut invalide.
         404:
           description: Demande non trouvée.
+        500:
+          description: Erreur interne du serveur.
 
   ### Admin ###
-  /api/admin/prestataire/bloquer/{idPrestataire}:
+
+  api/admin/profil:
+    get:
+      summary: "Récupérer le profil de l'administrateur"
+      description: "Permet de récupérer les informations du profil de l'administrateur."
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Profil de l'administrateur récupéré avec succès"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  administrateur:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      nom:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+        404:
+          description: "Administrateur non trouvé"
+        500:
+          description: "Erreur interne du serveur"
+
+  api/admin/modifier-profil:
     put:
-      summary: Bloquer un compte prestataire
+      summary: "Modifier le profil de l'administrateur"
+      description: "Permet de modifier les informations du profil de l'administrateur."
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                email:
+                  type: string
+                motDePasse:
+                  type: string
+      responses:
+        200:
+          description: "Profil administrateur mis à jour avec succès."
+        400:
+          description: "Bad Request - Les informations sont invalides."
+        500:
+          description: "Erreur interne du serveur"
+
+  api/admin/prestataire/bloquer/{idPrestataire}:
+    put:
+      summary: "Bloquer un compte prestataire"
+      description: "Permet de bloquer un prestataire en le désactivant."
       tags:
         - Admin
       security:
         - bearerAuth: []
       parameters:
-        - in: path
-          name: idPrestataire
+        - name: idPrestataire
+          in: path
+          description: "ID du prestataire à bloquer"
           required: true
           schema:
             type: string
-          description: ID du prestataire à bloquer.
       responses:
         200:
-          description: Prestataire bloqué avec succès.
-        403:
-          description: Accès refusé.
+          description: "Compte prestataire bloqué avec succès."
+        404:
+          description: "Prestataire non trouvé"
+        400:
+          description: "Cet utilisateur n'est pas un prestataire"
+        500:
+          description: "Erreur interne du serveur"
 
-  /api/admin/prestataire/debloquer/{idPrestataire}:
+  api/admin/prestataire/debloquer/{idPrestataire}:
     put:
-      summary: Débloquer un compte prestataire
+      summary: "Débloquer un compte prestataire"
+      description: "Permet de débloquer un prestataire en réactivant son compte."
       tags:
         - Admin
       security:
         - bearerAuth: []
       parameters:
-        - in: path
-          name: idPrestataire
+        - name: idPrestataire
+          in: path
+          description: "ID du prestataire à débloquer"
           required: true
           schema:
             type: string
-          description: ID du prestataire à débloquer.
       responses:
         200:
-          description: Prestataire débloqué avec succès.
-        403:
-          description: Accès refusé.
+          description: "Compte prestataire débloqué avec succès."
+        404:
+          description: "Prestataire non trouvé"
+        400:
+          description: "Cet utilisateur n'est pas un prestataire"
+        500:
+          description: "Erreur interne du serveur"
 
-  ### Routes privées ###
-  /api/privees/profil:
-    get:
-      summary: Récupérer le profil de l'utilisateur connecté
-      tags:
-        - Privées
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: Profil récupéré avec succès.
-        401:
-          description: Utilisateur non authentifié.
-
-  /api/privees/admin/dashboard:
-    get:
-      summary: Accéder au tableau de bord administrateur
-      tags:
-        - Privées
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: Bienvenue sur le tableau de bord administrateur.
-        403:
-          description: Accès refusé.
 
   ### Mot de Passe ###
 
-  /api/mot-de-passe/oublié:
+  /api/mot-de-passe/oublie:
     post:
       summary: Demander une réinitialisation de mot de passe
       tags:
@@ -487,15 +721,16 @@ paths:
               properties:
                 email:
                   type: string
-                  description: Email de l'utilisateur pour envoyer l'email de réinitialisation.
+                  format: email
+                  description: Adresse email de l'utilisateur pour recevoir le lien de réinitialisation du mot de passe.
       responses:
         200:
-          description: Email envoyé avec succès pour réinitialisation.
+          description: Email envoyé avec succès contenant les instructions de réinitialisation.
         404:
-          description: Utilisateur non trouvé.
+          description: Aucun utilisateur trouvé avec cet email.
 
   /api/mot-de-passe/modifier:
-    put:
+    post:
       summary: Modifier le mot de passe de l'utilisateur
       tags:
         - Mot de Passe
@@ -508,19 +743,25 @@ paths:
             schema:
               type: object
               required:
-                - ancienMotDePasse
+                - email
+                - codeVerification
                 - nouveauMotDePasse
               properties:
-                ancienMotDePasse:
+                email:
                   type: string
-                  description: Ancien mot de passe de l'utilisateur.
+                  format: email
+                  description: Adresse email associée au compte.
+                codeVerification:
+                  type: string
+                  description: Code de vérification envoyé par email.
                 nouveauMotDePasse:
                   type: string
+                  format: password
                   description: Nouveau mot de passe de l'utilisateur.
       responses:
         200:
           description: Mot de passe modifié avec succès.
         400:
-          description: Ancien mot de passe incorrect ou validation échouée.
+          description: Code de vérification incorrect ou validation du mot de passe échouée.
         401:
-          description: Utilisateur non authentifié.
+          description: Utilisateur non authentifié ou session expirée.
