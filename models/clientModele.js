@@ -1,5 +1,3 @@
-//backendTache21/models/clientModele.js
-
 const mongoose = require('mongoose');
 
 const clientSchema = new mongoose.Schema({
@@ -27,6 +25,16 @@ const clientSchema = new mongoose.Schema({
     role: {
         type: String,
         default: 'client',
+    },
+    // Champ pour le code de réinitialisation
+    codeReset: {
+        type: String,
+        default: null,
+    },
+    // Champ pour la date d'expiration du code
+    codeResetExpire: {
+        type: Date,
+        default: null,
     },
 
 }, {

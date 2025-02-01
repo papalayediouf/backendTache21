@@ -19,17 +19,17 @@ const connectDB = async () => {
 // Fonction pour ajouter un admin par défaut
 const creerAdminParDefaut = async () => {
     try {
-        const adminExistant = await Admin.findOne({ email: 'papalayediouf17@gmail.com' });
+        const adminExistant = await Admin.findOne({ email: 'soilihiambdouroihmane@gmail.com' });
         console.log('Admin existant:', adminExistant);  // Ajoute un log pour vérifier si l'admin existe déjà
 
         if (!adminExistant) {
-            const motDePasse = '1234';
+            const motDePasse = '123456';
             const salt = await bcrypt.genSalt(10);
             const motDePasseHash = await bcrypt.hash(motDePasse, salt);
 
             const nouvelAdmin = new Admin({
                 nom: 'Administrateur',
-                email: 'papalayediouf17@gmail.com',
+                email: 'soilihiambdouroihmane@gmail.com',
                 motDePasse: motDePasseHash,
             });
 

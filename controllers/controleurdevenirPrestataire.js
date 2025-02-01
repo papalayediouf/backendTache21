@@ -2,32 +2,24 @@ const bcrypt = require('bcryptjs');
 const Prestataire = require('../models/prestataireModele');
 const Client = require('../models/clientModele');
 
+
 // Inscription d'un prestataire
+
 const inscriptionPrestataire = async (req, res) => {
   const { nom, prenom, email, telephone, motDePasse, nomDeLentreprise, region, departement, description } = req.body;
 
   try {
     // Vérifier si un prestataire existe déjà avec cet email
     const prestataireExistant = await Prestataire.findOne({ email });
-    const clientExistant = await Client.findOne({ email });
-    console.log("Client trouvé :", clientExistant);
-
-  
-
-    // Supprimer le compte client si un client avec cet email existe
-    if (clientExistant) {
-      console.log(`Client trouvé : ${clientExistant.email}`);
-      await Client.findOneAndDelete({ email });
-      console.log(`Client avec l'email ${email} a été supprimé.`);
-    } else {
-      console.log(`Aucun client trouvé avec l'email ${email}`);
-    }
-
+   
     if (prestataireExistant) {
       return res.status(400).json({ message: "Un prestataire avec cet email existe déjà." });
     }
 
-    // Créer un nouvel prestataire
+    // Vérifier si l'utilisateur est un client existant
+    const clientExistant = await Client.findOne({ email });
+
+    // Créer un nouveau prestataire
     const prestataire = new Prestataire({
       nom,
       prenom,
@@ -43,6 +35,12 @@ const inscriptionPrestataire = async (req, res) => {
     // Sauvegarder le prestataire dans la base de données
     await prestataire.save();
 
+    // Si un client existant est trouvé, supprimer son compte
+    if (clientExistant) {
+      await Client.deleteOne({ email });
+      console.log(`Compte client supprimé pour l'email : ${email}`);
+    }
+
     res.status(201).json({
       message: "Inscription réussie. Vous êtes maintenant un prestataire.",
       prestataire: {
@@ -51,7 +49,6 @@ const inscriptionPrestataire = async (req, res) => {
         prenom: prestataire.prenom,
         email: prestataire.email,
         telephone: prestataire.telephone,
-        motDePasse: prestataire.motDePasse,
         nomDeLentreprise: prestataire.nomDeLentreprise,
         region: prestataire.region,
         departement: prestataire.departement,
@@ -65,7 +62,7 @@ const inscriptionPrestataire = async (req, res) => {
   }
 };
 
-// Récupérer le profil du prestataire
+// Récupérer le profil du prestataire  
 const profilPrestataire = async (req, res) => {
   try {
     // Trouver le prestataire par son ID (qui est dans le token JWT)
@@ -93,7 +90,47 @@ const profilPrestataire = async (req, res) => {
   }
 };
 
+// Lister tous les prestataires
+const listerPrestataires = async (req, res) => {
+  try {
+    const prestataires = await Prestataire.find().select('-motDePasse'); // Exclure le mot de passe
+    res.status(200).json(prestataires);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des prestataires :", error);
+    res.status(500).json({ message: "Erreur interne du serveur." });
+  }
+};
+
+const supprimerDemandeReservation = async (req, res) => {
+  const { demandeId } = req.params; // Récupérer l'ID de la demande de réservation à supprimer
+
+  try {
+    // Vérifier si la demande existe
+    const demande = await ReservationRequest.findById(demandeId);
+    if (!demande) {
+      return res.status(404).json({ message: 'Demande non trouvée.' });
+    }
+
+    // Vérifier si le prestataire est celui auquel la demande appartient
+    if (demande.prestataireId.toString() !== req.utilisateur._id.toString()) {
+      return res.status(403).json({ message: 'Vous n\'êtes pas autorisé à supprimer cette demande.' });
+    }
+
+    // Supprimer la demande
+    await demande.deleteOne();
+
+    res.status(200).json({ message: 'Demande supprimée avec succès.' });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la demande :", error.message);
+    res.status(500).json({ message: 'Erreur interne du serveur.' });
+  }
+};
+
+
 module.exports = {
   inscriptionPrestataire,
   profilPrestataire,
+  listerPrestataires, 
+  supprimerDemandeReservation,
 };
+

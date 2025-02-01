@@ -1,3 +1,5 @@
+//backendTache21/controllers/controleurServices.js
+
 const Service = require("../models/serviceModele");
 const mongoose = require("mongoose");
 
@@ -20,7 +22,7 @@ const ajouterService = async (req, res) => {
       : null;
 
     // Vérification des champs requis
-    if (!nomDeservice || !categorie || !descriptionDeService , !imageService ) {
+    if (!nomDeservice || !categorie || !descriptionDeService   ) {
       return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
     }
 
