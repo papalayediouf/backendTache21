@@ -1,13 +1,14 @@
 const DemandeService = require('../models/demandeServiceModele');
+const Utilisateur = require('../models/prestataireModele');
 const transporter = require('../config/emailConfig'); // Configuration de Nodemailer
 
 /// **Créer une demande de service et l'envoyer à un prestataire**
 const creerDemandeService = async (req, res) => {
     try {
-        const { typeService, numeroTelephone, descriptionAdresse, date, prestataireId } = req.body;
+        const { typeService, numeroTelephone, description, adresse, date, prestataireId } = req.body;
 
         // Vérifie que toutes les informations nécessaires sont présentes
-        if (!typeService || !numeroTelephone || !descriptionAdresse || !date || !prestataireId) {
+        if (!typeService || !numeroTelephone || !description || !adresse || !date || !prestataireId) {
             return res.status(400).json({ message: 'Veuillez fournir toutes les informations nécessaires.' });
         }
 
@@ -21,9 +22,10 @@ const creerDemandeService = async (req, res) => {
         const nouvelleDemande = new DemandeService({
             typeService,
             numeroTelephone,
-            descriptionAdresse,
+            description,
+            adresse,
             date,
-            client: req.utilisateur._id, // Client connecté
+            client: req.utilisateur.id, // Client connecté
             prestataire: prestataireId,
             statut: 'en attente', // Statut initial
         });
@@ -42,7 +44,7 @@ const creerDemandeService = async (req, res) => {
                 <ul>
                     <li><strong>Type de service :</strong> ${typeService}</li>
                     <li><strong>Numéro de téléphone :</strong> ${numeroTelephone}</li>
-                    <li><strong>Description et adresse :</strong> ${descriptionAdresse}</li>
+                    <li><strong>Description et adresse :</strong> ${description}</li>
                     <li><strong>Date :</strong> ${date}</li>
                 </ul>
                 <p>Veuillez vous connecter à votre compte pour consulter les détails et répondre à cette demande.</p>

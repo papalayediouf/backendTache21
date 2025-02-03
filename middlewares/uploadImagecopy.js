@@ -32,6 +32,6 @@ const upload = multer({
 
 // Exportation de deux middlewares distincts
 module.exports = {
-  uploadServiceImage: upload.single("imageService"),
+ 
   uploadDiplomeImage: upload.single("imageDiplomes"),
 };

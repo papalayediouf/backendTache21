@@ -1,3 +1,4 @@
+// backendTache21/models/serviceModele.js
 const mongoose = require('mongoose');
 
 const serviceSchema = mongoose.Schema({
@@ -10,3 +11,4 @@ const serviceSchema = mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('Service', serviceSchema);
+//

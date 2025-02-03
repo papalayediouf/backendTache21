@@ -1,5 +1,7 @@
 // backendTache21/controllers/controleurAdministrateur.js
 
+// profile administrateur
+
 // Fonction pour bloquer un prestataire
 const bloquerComptePrestataire = async (requete, reponse) => {
     const { idPrestataire } = requete.params; 

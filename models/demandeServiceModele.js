@@ -36,13 +36,13 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     client: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'client',
+      ref: 'Client',
       required: true,
       description: 'Référence vers l’utilisateur client ayant fait la demande.',
     },
     prestataire: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'prestataire',
+      ref: 'Prestataire',
       required: true,
       description: 'Référence vers le prestataire assigné à la demande.',
     },
@@ -52,10 +52,8 @@ const DemandeServiceSchema = new mongoose.Schema(
       default: 'en attente',
       description: 'Statut actuel de la demande de service.',
     },
-  },
-  {
-    timestamps: true, 
   }
+  
 );
 
 module.exports = mongoose.model('DemandeService', DemandeServiceSchema);

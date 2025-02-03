@@ -13,7 +13,6 @@ connectDB();
 const app = express();
 
 app.use(express.json());
-
 app.use(cors());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -31,6 +30,7 @@ const routePrivees = require('./routes/routePrivees');
 const demandeServiceRoutes = require('./routes/routesDemandeService'); 
 const clientRoutes = require('./routes/routeClient'); 
 const prestataireRoutes = require('./routes/routePrestataire'); 
+const routeStatistique = require('./routes/routeStatistique'); // Import de la route statistiques
 
 const Info = require ('./routes/routeinfoprestataire')
 
@@ -43,15 +43,20 @@ app.use('/api/privees', routePrivees);
 app.use('/api/demandes-services', demandeServiceRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/prestataires', prestataireRoutes);
+app.use('/api/statistiques', routeStatistique); // Ajout de la route statistiques
+
 
 app.use('/api/', Info);
 
+
+
+// Middleware pour gérer les erreurs 404
 
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Ressource non trouvée.' });
 });
 
-// Middleware global pour gérer les erreurs du serveur
+// Middleware global pour gérer les erreurs serveur
 app.use((err, req, res, next) => {
   console.error('Erreur serveur:', err.stack);
   res.status(500).json({

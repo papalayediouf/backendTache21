@@ -4,7 +4,9 @@ const { ajouterService , obtenirDetailService } = require('../controllers/contro
 const { verifierToken } = require('../middlewares/authentification');
 const verifierRole = require('../middlewares/verifierRole');
 const Service = require('../models/serviceModele');
-const upload = require('../middlewares/uploadImage');
+
+const { uploadServiceImage  } = require('../middlewares/uploadImage');
+// const { uploadDiplomeImage } = require('../middlewares/uploadImagecopy');
 
 
 const router = express.Router();
@@ -22,7 +24,8 @@ router.post(
         next();
     },
     verifierRole(['prestataire']),
-    upload.single("image"),
+    uploadServiceImage,
+    // uploadDiplomeImage,
     ajouterService
 );
 
@@ -32,7 +35,7 @@ router.get('/tous-les-services', async (req, res) => {
 
     const servicesWithImageUrls = services.map(service => ({
       ...service.toObject(),
-      imageUrl: `https://backendtache21.onrender.com/uploads/images/${service.image}`,  
+      imageUrl: `https://backendtache21.onrender.com/uploads/images/${service.imageService}`,  
     }));
 
     res.status(200).json(servicesWithImageUrls);
@@ -41,6 +44,8 @@ router.get('/tous-les-services', async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des services' });
   }
 });
+
+// id Du service pour l'afficher
 router.get("/:id", obtenirDetailService);
 
 

@@ -3,30 +3,21 @@
 const Service = require("../models/serviceModele");
 const mongoose = require("mongoose");
 
+//backendTache21/controllers/controleurServices.js
 const ajouterService = async (req, res) => {
   try {
-    const {
-      nomDeservice,
-      categorie,
-      descriptionDeService,
-     
-    } = req.body;
+    const { nomDeservice, categorie, descriptionDeService } = req.body;
+    
+    // Récupérer le chemin des fichiers téléchargés
+    const imageService = req.file ? req.file.filename : "";
+    const imageDiplomes = req.file ? req.file.filename : "";
 
-    // Récupérer et formater les chemins des images
-    const imageService = req.files?.imageService?.[0]?.path
-      ? req.files.imageService[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/")
-      : null;
-
-    const imageDiplomes = req.files?.imageDiplomes?.[0]?.path
-      ? req.files.imageDiplomes[0].path.replace("C:/Dev/Tache21/backendTache21", "").replace(/\\/g, "/")
-      : null;
-
-    // Vérification des champs requis
-    if (!nomDeservice || !categorie || !descriptionDeService   ) {
+    // Vérification des champs obligatoires
+    if (!nomDeservice || !categorie || !descriptionDeService) {
       return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
     }
 
-    // Création du nouveau service
+    // Création du service
     const nouveauService = new Service({
       nomDeservice,
       categorie,
@@ -45,6 +36,8 @@ const ajouterService = async (req, res) => {
   }
 };
 
+
+//backendTache21/controllers/controleurServices.js
 const obtenirDetailService = async (req, res) => {
   try {
     const { id } = req.params;  // Récupérer l'ID du service depuis les paramètres de l'URL

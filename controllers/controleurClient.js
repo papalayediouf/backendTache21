@@ -52,6 +52,7 @@ const inscriptionClient = async (req, res) => {
 
 
 // **Récupérer les informations d'un client**
+// regler
 const obtenirClient = async (req, res) => {
   const { id } = req.utilisateur;
 
@@ -76,6 +77,7 @@ const obtenirClient = async (req, res) => {
 };
 
 // **Mettre à jour les informations du client**
+// regler
 const mettreAJourClient = async (req, res) => {
   const { id } = req.utilisateur; // ID récupéré depuis le middleware
   const { nom, prenom, email } = req.body;
@@ -96,11 +98,11 @@ const mettreAJourClient = async (req, res) => {
     res.status(200).json({
       message: "Informations du client mises à jour avec succès.",
       client: {
-        id: client._id,
+        
         nom: client.nom,
         prenom: client.prenom,
         email: client.email,
-        role: client.role,
+       
       },
     });
   } catch (error) {
@@ -110,6 +112,7 @@ const mettreAJourClient = async (req, res) => {
 };
 
 // **Supprimer un compte client**
+// pas encore gerer
 const supprimerCompteClient = async (req, res) => {
   const { id } = req.utilisateur;
 
