@@ -30,7 +30,10 @@ const routePrivees = require('./routes/routePrivees');
 const demandeServiceRoutes = require('./routes/routesDemandeService'); 
 const clientRoutes = require('./routes/routeClient'); 
 const prestataireRoutes = require('./routes/routePrestataire'); 
-const routeStatistique = require('./routes/routeStatistique'); // Import de la route statistiques
+const routeStatistique = require('./routes/routeStatistique'); 
+const routesCategorie = require('./routes/routesCategorie');
+
+const Info = require ('./routes/routeinfoprestataire')
 
 // Définition des routes principales
 app.use('/api/utilisateurs', utilisateurRoutes);
@@ -42,9 +45,10 @@ app.use('/api/demandes-services', demandeServiceRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/prestataires', prestataireRoutes);
 app.use('/api/statistiques', routeStatistique);
+app.use('/api/categories', routesCategorie);
 
 
-const Info = require ('./routes/routeinfoprestataire')
+
 app.use('/api/', Info);
 
 // Middleware pour gérer les erreurs 404

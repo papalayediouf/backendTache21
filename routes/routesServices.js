@@ -5,7 +5,7 @@ const { verifierToken } = require('../middlewares/authentification');
 const verifierRole = require('../middlewares/verifierRole');
 
 
-const { uploadServiceImage ,  uploadDiplomeImage } = require('../middlewares/uploadImage');
+const { uploadServiceImage  } = require('../middlewares/uploadImage');
 
 
 
@@ -25,7 +25,7 @@ router.post(
     },
     verifierRole(['prestataire']),
     uploadServiceImage,
-    uploadDiplomeImage,
+    // uploadDiplomeImage,
     ajouterService
 );
 

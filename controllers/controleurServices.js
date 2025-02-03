@@ -11,9 +11,9 @@ const ajouterService = async (req, res) => {
 
     const imageService = req.file ? req.file.filename : "";
     const imageDiplomes = req.file ? req.file.filename : "";
-    
-    // Vérification des champs obligatoires
-    if (!nomDeservice || !categorie || !descriptionDeService || !imageService || !imageDiplomes) {
+
+    // Vérification des champs obligatoires//
+    if (!nomDeservice || !categorie || !descriptionDeService ) {
       return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
     }
 
