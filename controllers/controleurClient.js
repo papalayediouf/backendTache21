@@ -50,8 +50,6 @@ const inscriptionClient = async (req, res) => {
 };
 
 
-
-
 // **Récupérer les informations d'un client**
 
 const obtenirClient = async (req, res) => {

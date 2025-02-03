@@ -5,10 +5,10 @@ const transporter = require('../config/emailConfig'); // Configuration de Nodema
 /// **Créer une demande de service et l'envoyer à un prestataire**
 const creerDemandeService = async (req, res) => {
     try {
-        const { typeService, numeroTelephone, descriptionAdresse, date, prestataireId } = req.body;
+        const { typeService, numeroTelephone, description, date, prestataireId } = req.body;
 
         // Vérifie que toutes les informations nécessaires sont présentes
-        if (!typeService || !numeroTelephone || !descriptionAdresse || !date || !prestataireId) {
+        if (!typeService || !numeroTelephone || !description || !date || !prestataireId) {
             return res.status(400).json({ message: 'Veuillez fournir toutes les informations nécessaires.' });
         }
 

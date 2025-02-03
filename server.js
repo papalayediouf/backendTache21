@@ -7,7 +7,7 @@ const cors = require('cors');
 const path = require('path');
 
 dotenv.config(); 
-
+                       
 connectDB();
 
 const app = express();
@@ -30,7 +30,7 @@ const routePrivees = require('./routes/routePrivees');
 const demandeServiceRoutes = require('./routes/routesDemandeService'); 
 const clientRoutes = require('./routes/routeClient'); 
 const prestataireRoutes = require('./routes/routePrestataire'); 
-const routeStatistique = require('./routes/routeStatistique'); // Import de la route statistiques
+
 
 // Définition des routes principales
 app.use('/api/utilisateurs', utilisateurRoutes);
@@ -41,7 +41,7 @@ app.use('/api/privees', routePrivees);
 app.use('/api/demandes-services', demandeServiceRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/prestataires', prestataireRoutes);
-app.use('/api/statistiques', routeStatistique); // Ajout de la route statistiques
+
 
 // Middleware pour gérer les erreurs 404
 app.use((req, res, next) => {

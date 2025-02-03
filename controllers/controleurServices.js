@@ -8,33 +8,42 @@ const ajouterService = async (req, res) => {
   try {
     const { nomDeservice, categorie, descriptionDeService } = req.body;
 
-    // Récupérer le chemin des fichiers téléchargés
+
     const imageService = req.file ? req.file.filename : "";
     const imageDiplomes = req.file ? req.file.filename : "";
-
+    
     // Vérification des champs obligatoires
-    if (!nomDeservice || !categorie || !descriptionDeService) {
+    if (!nomDeservice || !categorie || !descriptionDeService || !imageService || !imageDiplomes) {
       return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
     }
 
-    // Création du service
+    // Création du service avec les URLs des images
     const nouveauService = new Service({
       nomDeservice,
       categorie,
       descriptionDeService,
       imageService,
       imageDiplomes,
-      prestataire: req.utilisateur.id,
+      prestataire: req.utilisateur.id, // L'ID du prestataire
     });
 
     // Sauvegarde dans la base de données
     const serviceCree = await nouveauService.save();
-    res.status(201).json(serviceCree);
+
+    // Retourner les URLs des images dans la réponse
+    const serviceWithImageUrls = {
+      ...serviceCree.toObject(),
+      imageServiceUrl: serviceCree.imageService,
+      imageDiplomesUrl: serviceCree.imageDiplomes,
+    };
+
+    res.status(201).json(serviceWithImageUrls);
   } catch (err) {
     console.error("Erreur lors de l'ajout du service :", err);
     res.status(500).json({ message: "Erreur interne du serveur." });
   }
 };
+
 
 
 const obtenirTousLesServices = async (req, res) => {
