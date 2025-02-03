@@ -5,8 +5,8 @@ const serviceSchema = mongoose.Schema({
     nomDeservice: { type: String, required: true },
     categorie: { type: String, required: true },
     descriptionDeService: { type: String, required: true },
-    imageService: { type: String, default: ''  },
-    imageDiplomes: { type: String, default: '' }, //
+    imageService: { type: String, required: true   },
+    imageDiplomes: { type: String, required: true  }, //
     prestataire: { type: mongoose.Schema.Types.ObjectId, ref: 'Prestataire', required: true },
 }, { timestamps: true });
 
