@@ -27,7 +27,7 @@ const inscriptionPrestataire = async (req, res) => {
       region,
       departement,
       description,
-      actif: true, // Ajout du champ actif (par défaut un prestataire est actif)
+      actif: true, 
     });
 
     await prestataire.save();

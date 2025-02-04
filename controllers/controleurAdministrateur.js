@@ -1,6 +1,8 @@
 //backendTache21/controllers/controleurAdministrateur.js
 const Administrateur = require('../models/adminModele');
 const bcrypt = require('bcryptjs');
+const Prestataire = require('../models/prestataireModele'); 
+
 
 // Fonction pour récupérer le profil de l'administrateur
 const profilAdministrateur = async (requete, reponse) => {
@@ -73,7 +75,7 @@ const bloquerComptePrestataire = async (requete, reponse) => {
   const { idPrestataire } = requete.params;
 
   try {
-    const prestataire = await Utilisateur.findById(idPrestataire);
+    const prestataire = await Prestataire.findById(idPrestataire);
 
     if (!prestataire) {
       return reponse.status(404).json({ message: 'Prestataire non trouvé.' });
@@ -98,7 +100,7 @@ const debloquerComptePrestataire = async (requete, reponse) => {
   const { idPrestataire } = requete.params;
 
   try {
-    const prestataire = await Utilisateur.findById(idPrestataire);
+    const prestataire = await Prestataire.findById(idPrestataire);
 
     if (!prestataire) {
       return reponse.status(404).json({ message: 'Prestataire non trouvé.' });
@@ -117,6 +119,7 @@ const debloquerComptePrestataire = async (requete, reponse) => {
     reponse.status(500).json({ message: 'Erreur lors du déblocage du compte prestataire.' });
   }
 };
+
 
 // Exportation des fonctions
 module.exports = {
