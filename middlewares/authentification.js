@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const verifierToken = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
+    
     if (!token) {
         console.log("Aucun token fourni dans les en-têtes.");
         return res.status(401).json({ message: "Accès non autorisé : token manquant." });

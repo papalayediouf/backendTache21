@@ -48,6 +48,7 @@ const connexion = async (req, res) => {
       utilisateur: {
         id: utilisateur._id,
         nom: utilisateur.nom,
+        prenom: utilisateur.prenom,
         email: utilisateur.email,
         role: utilisateur.role, 
       },
