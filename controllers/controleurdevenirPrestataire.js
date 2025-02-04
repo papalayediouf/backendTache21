@@ -10,16 +10,13 @@ const inscriptionPrestataire = async (req, res) => {
   const { nom, prenom, email, telephone, motDePasse, nomDeLentreprise, region, departement, description } = req.body;
 
   try {
-    // Vérifier si un prestataire existe déjà avec cet email
     const prestataireExistant = await Prestataire.findOne({ email });
     if (prestataireExistant) {
       return res.status(400).json({ message: "Un prestataire avec cet email existe déjà." });
     }
 
-    // Vérifier si l'utilisateur est un client existant
     const clientExistant = await Client.findOne({ email });
 
-    // Créer un nouveau prestataire
     const prestataire = new Prestataire({
       nom,
       prenom,
@@ -30,14 +27,13 @@ const inscriptionPrestataire = async (req, res) => {
       region,
       departement,
       description,
+      actif: true, // Ajout du champ actif (par défaut un prestataire est actif)
     });
 
-    // Sauvegarder le prestataire dans la base de données
     await prestataire.save();
-
-    // Si un client existant est trouvé, supprimer son compte
+//
     if (clientExistant) {
-      await Client.deleteOne({ email });
+      await Client.findByIdAndDelete(clientExistant._id);
       console.log(`Compte client supprimé pour l'email : ${email}`);
     }
 
@@ -60,6 +56,7 @@ const inscriptionPrestataire = async (req, res) => {
     res.status(500).json({ message: "Erreur interne du serveur." });
   }
 };
+
 
 // Récupérer le profil du prestataire  
 const profilPrestataire = async (req, res) => {

@@ -1,5 +1,3 @@
-//backendTache21/models/prestataireModele.js
-
 const mongoose = require('mongoose');
 
 const prestataireSchema = mongoose.Schema(
@@ -16,6 +14,10 @@ const prestataireSchema = mongoose.Schema(
     role: {
       type: String,
       default: 'prestataire',
+    },
+    actif: { 
+      type: Boolean, 
+      default: true // ✅ Par défaut, un prestataire est actif
     },
     // Champ pour le code de réinitialisation
     codeReset: {
