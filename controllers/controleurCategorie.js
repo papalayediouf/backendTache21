@@ -22,12 +22,33 @@ exports.ajouterCategorie = async (req, res) => {
     }
 };
 
-// Afficher toutes les catégories
+// archiver categorie 
+// Archiver ou désarchiver une catégorie
+exports.archiverCategorie = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const categorie = await Categorie.findById(id);
+
+        if (!categorie) {
+            return res.status(404).json({ message: "Catégorie non trouvée." });
+        }
+
+        categorie.archive = !categorie.archive; // Toggle de l'archivage
+        await categorie.save();
+
+        res.status(200).json({ message: `Catégorie ${categorie.archive ? "archivée" : "désarchivée"} avec succès.`, categorie });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur.", error });
+    }
+};
+
+// Afficher toutes les catégories non archivées
 exports.afficherCategories = async (req, res) => {
     try {
-        const categories = await Categorie.find();
+        const categories = await Categorie.find({ archive: false });
         res.status(200).json(categories);
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur.", error });
     }
 };
+

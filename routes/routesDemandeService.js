@@ -1,9 +1,9 @@
-// backendTache21/routes/routesDemandeService.js
 const express = require('express');
 const { verifierToken } = require('../middlewares/authentification');
-const   verifierRole  = require('../middlewares/verifierRole');
+const verifierRole = require('../middlewares/verifierRole');
 const {
   creerDemandeService,
+  obtenirToutesLesDemandes,
   obtenirDemandesParClient,
   obtenirDemandesParPrestataire,
   mettreAJourStatutDemande,
@@ -11,15 +11,23 @@ const {
 
 const routeur = express.Router();
 
-
+/// **Créer une demande (client ou prestataire)**
 routeur.post(
   '/demande',
   verifierToken,
-  verifierRole(['client','prestataire']),
+  verifierRole(['client', 'prestataire']),
   creerDemandeService
 );
 
+/// **Obtenir toutes les demandes (uniquement admin)**
+routeur.get(
+  '/toutes',
+  verifierToken,
+  verifierRole(['admin']),
+  obtenirToutesLesDemandes
+);
 
+/// **Obtenir les demandes d'un client**
 routeur.get(
   '/client',
   verifierToken,
@@ -27,7 +35,7 @@ routeur.get(
   obtenirDemandesParClient
 );
 
-
+/// **Obtenir les demandes d'un prestataire**
 routeur.get(
   '/prestataire',
   verifierToken,
@@ -35,7 +43,7 @@ routeur.get(
   obtenirDemandesParPrestataire
 );
 
-
+/// **Mettre à jour le statut d'une demande (prestataire uniquement)**
 routeur.put(
   '/:id/statut',
   verifierToken,

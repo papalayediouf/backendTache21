@@ -1,69 +1,92 @@
-// backendTache21/controllers/controleurDemandeService.js
 const DemandeService = require('../models/demandeServiceModele');
-const transporter = require('../config/emailConfig'); // Configuration de Nodemailer
+const transporter = require('../config/emailConfig');
+const Prestataire = require('../models/prestataireModele');
+const Client = require('../models/clientModele');
+const Admin = require('../models/adminModele');
 
-/// **Créer une demande de service et l'envoyer à un prestataire**
+/// **Créer une demande de service**
 const creerDemandeService = async (req, res) => {
     try {
         const { typeService, numeroTelephone, description, date, prestataireId } = req.body;
 
-        // Vérifie que toutes les informations nécessaires sont présentes
         if (!typeService || !numeroTelephone || !description || !date || !prestataireId) {
             return res.status(400).json({ message: 'Veuillez fournir toutes les informations nécessaires.' });
         }
 
-        // Vérifie si le prestataire existe et qu'il a le bon rôle
-        const prestataire = await Utilisateur.findById(prestataireId);
-        if (!prestataire || prestataire.role !== 'prestataire') {
-            return res.status(404).json({ message: 'Prestataire non trouvé ou rôle invalide.' });
+        const prestataire = await Prestataire.findById(prestataireId);
+        if (!prestataire) {
+            return res.status(404).json({ message: 'Prestataire non trouvé.' });
         }
 
-        // Crée une nouvelle demande de service
+        const utilisateur = await Client.findById(req.utilisateur._id) ||
+            await Prestataire.findById(req.utilisateur._id) ||
+            await Admin.findById(req.utilisateur._id);
+        if (!utilisateur) {
+            return res.status(403).json({ message: "Seuls les utilisateurs connectés peuvent créer une demande de service." });
+        }
+
         const nouvelleDemande = new DemandeService({
             typeService,
             numeroTelephone,
-            descriptionAdresse,
+            description,
             date,
-            client: req.utilisateur._id, // Client connecté
+            utilisateur: req.utilisateur._id,
             prestataire: prestataireId,
-            statut: 'en attente', // Statut initial
+            statut: 'en attente',
         });
 
-        // Sauvegarde la demande
         await nouvelleDemande.save();
 
-        // Prépare et envoie un email au prestataire
-        const mailOptions = {
-            from: process.env.EMAIL_USER, // Adresse email de l'expéditeur
-            to: prestataire.email, // Adresse email du prestataire
-            subject: 'Nouvelle demande de service reçue',
-            html: `
-                <h3>Bonjour ${prestataire.nom},</h3>
-                <p>Vous avez reçu une nouvelle demande de service :</p>
-                <ul>
-                    <li><strong>Type de service :</strong> ${typeService}</li>
-                    <li><strong>Numéro de téléphone :</strong> ${numeroTelephone}</li>
-                    <li><strong>Description et adresse :</strong> ${descriptionAdresse}</li>
-                    <li><strong>Date :</strong> ${date}</li>
-                </ul>
-                <p>Veuillez vous connecter à votre compte pour consulter les détails et répondre à cette demande.</p>
-            `,
-        };
+        if (prestataire.email) {
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: prestataire.email,
+                subject: 'Nouvelle demande de service reçue',
+                html: `
+                    <h3>Bonjour ${prestataire.nom},</h3>
+                    <p>Vous avez reçu une nouvelle demande de service :</p>
+                    <ul>
+                        <li><strong>Type de service :</strong> ${typeService}</li>
+                        <li><strong>Numéro de téléphone :</strong> ${numeroTelephone}</li>
+                        <li><strong>Description :</strong> ${description}</li>
+                        <li><strong>Date :</strong> ${date}</li>
+                    </ul>
+                    <p>Veuillez vous connecter à votre compte pour consulter les détails et répondre à cette demande.</p>
+                `,
+            };
 
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error('Erreur lors de l\'envoi de l\'email :', error.message);
-            } else {
-                console.log('Email envoyé :', info.response);
-            }
-        });
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error('Erreur envoi email :', error.message);
+                } else {
+                    console.log('Email envoyé :', info.response);
+                }
+            });
+        }
 
-        res.status(201).json({
-            message: 'Demande de service créée et envoyée avec succès.',
-            demande: nouvelleDemande,
-        });
+        res.status(201).json({ message: 'Demande de service créée et envoyée.', demande: nouvelleDemande });
     } catch (error) {
-        console.error('Erreur lors de la création de la demande de service :', error.message);
+        console.error('Erreur création demande :', error.message);
+        res.status(500).json({ message: 'Erreur interne du serveur.' });
+    }
+};
+
+/// **Obtenir toutes les demandes avec les infos du créateur (Admin)**
+const obtenirToutesLesDemandes = async (req, res) => {
+    try {
+        const admin = await Admin.findById(req.utilisateur._id);
+        if (!admin) {
+            return res.status(403).json({ message: "Accès interdit. Seuls les administrateurs peuvent voir toutes les demandes." });
+        }
+
+        const demandes = await DemandeService.find()
+            .populate('utilisateur', 'nom email')
+            .populate('prestataire', 'nom email')
+            .lean();
+
+        res.status(200).json({ message: 'Demandes récupérées.', demandes });
+    } catch (error) {
+        console.error('Erreur récupération demandes :', error.message);
         res.status(500).json({ message: 'Erreur interne du serveur.' });
     }
 };
@@ -71,17 +94,12 @@ const creerDemandeService = async (req, res) => {
 /// **Obtenir les demandes d'un client connecté**
 const obtenirDemandesParClient = async (req, res) => {
     try {
-        const clientId = req.utilisateur._id; // ID extrait du token JWT
+        const demandes = await DemandeService.find({ utilisateur: req.utilisateur._id })
+            .populate('prestataire', 'nom email');
 
-        // Récupère toutes les demandes du client
-        const demandes = await DemandeService.find({ client: clientId }).populate('prestataire', 'nom email');
-
-        res.status(200).json({
-            message: 'Demandes récupérées avec succès.',
-            demandes,
-        });
+        res.status(200).json({ message: 'Demandes récupérées.', demandes });
     } catch (error) {
-        console.error('Erreur lors de la récupération des demandes de service pour le client :', error.message);
+        console.error('Erreur récupération demandes client :', error.message);
         res.status(500).json({ message: 'Erreur interne du serveur.' });
     }
 };
@@ -89,61 +107,49 @@ const obtenirDemandesParClient = async (req, res) => {
 /// **Obtenir les demandes d'un prestataire connecté**
 const obtenirDemandesParPrestataire = async (req, res) => {
     try {
-        const prestataireId = req.utilisateur._id; // ID extrait du token JWT
+        const demandes = await DemandeService.find({ prestataire: req.utilisateur._id })
+            .populate('utilisateur', 'nom email');
 
-        // Vérifie si l'utilisateur est bien un prestataire
-        if (req.utilisateur.role !== 'prestataire') {
-            return res.status(403).json({ message: "Accès interdit. Vous n'êtes pas un prestataire." });
-        }
-
-        // Recherche des demandes de service associées au prestataire
-        const demandes = await DemandeService.find({ prestataire: prestataireId }).populate('client', 'nom email');
-
-        res.status(200).json({
-            message: 'Demandes récupérées avec succès.',
-            demandes,
-        });
+        res.status(200).json({ message: 'Demandes récupérées.', demandes });
     } catch (error) {
-        console.error('Erreur lors de la récupération des demandes de service pour le prestataire :', error.message);
+        console.error('Erreur récupération demandes prestataire :', error.message);
         res.status(500).json({ message: 'Erreur interne du serveur.' });
     }
 };
 
-/// **Mettre à jour le statut d'une demande (acceptée, refusée ou terminée)**
+/// **Mettre à jour le statut d'une demande**
 const mettreAJourStatutDemande = async (req, res) => {
     try {
-        const { id } = req.params; // ID de la demande
+        const { id } = req.params;
         const { statut } = req.body;
 
-        // Vérifie si le statut est valide
         const statutsValides = ['acceptée', 'refusée', 'terminée'];
         if (!statutsValides.includes(statut)) {
             return res.status(400).json({ message: 'Statut invalide.' });
         }
 
-        // Met à jour la demande de service
-        const demande = await DemandeService.findByIdAndUpdate(
-            id,
-            { statut },
-            { new: true }
-        ).populate('client prestataire', 'nom email');
-
+        const demande = await DemandeService.findById(id);
         if (!demande) {
-            return res.status(404).json({ message: 'Demande de service non trouvée.' });
+            return res.status(404).json({ message: 'Demande non trouvée.' });
         }
 
-        res.status(200).json({
-            message: 'Statut de la demande mis à jour avec succès.',
-            demande,
-        });
+        if (req.utilisateur._id.toString() !== demande.prestataire.toString()) {
+            return res.status(403).json({ message: "Vous n'êtes pas autorisé à modifier cette demande." });
+        }
+
+        demande.statut = statut;
+        await demande.save();
+
+        res.status(200).json({ message: 'Statut mis à jour.', demande });
     } catch (error) {
-        console.error('Erreur lors de la mise à jour du statut de la demande :', error.message);
+        console.error('Erreur mise à jour statut :', error.message);
         res.status(500).json({ message: 'Erreur interne du serveur.' });
     }
 };
 
 module.exports = {
     creerDemandeService,
+    obtenirToutesLesDemandes,
     obtenirDemandesParClient,
     obtenirDemandesParPrestataire,
     mettreAJourStatutDemande,

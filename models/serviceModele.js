@@ -6,7 +6,7 @@ const serviceSchema = mongoose.Schema({
     categorie: { type: String, required: true },
     descriptionDeService: { type: String, required: true },
     imageService: { type: String, default: ''  },
-    imageDiplomes: { type: String, default: '' }, //
+    // imageDiplomes: { type: String, default: '' }, //
     prestataire: { type: mongoose.Schema.Types.ObjectId, ref: 'Prestataire', required: true },
 }, { timestamps: true });
 
