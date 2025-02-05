@@ -88,7 +88,7 @@ const obtenirToutesLesDemandes = async (req, res) => {
             };
         }));
 //
-        res.status(200).json({ message: 'Demandes récupérées.', demandes: demandesAvecInfo });
+        res.status(200).json({ demandes: demandesAvecInfo });
     } catch (error) {
         console.error('Erreur récupération demandes :', error.message);
         res.status(500).json({ message: 'Erreur interne du serveur.' });
