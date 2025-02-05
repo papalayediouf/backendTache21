@@ -74,7 +74,6 @@ const creerDemandeService = async (req, res) => {
 /// **Obtenir toutes les demandes avec les infos du créateur (Admin)**
 const obtenirToutesLesDemandes = async (req, res) => {
     try {
-        // Récupérer toutes les demandes
         const demandes = await DemandeService.find();
 
         // Récupérer les informations du client et du prestataire pour chaque demande
@@ -88,16 +87,8 @@ const obtenirToutesLesDemandes = async (req, res) => {
                 prestataire: prestataire ? { nom: prestataire.nom, email: prestataire.email } : null,
             };
         }));
-
-        // Calculer le nombre total de demandes
-        const totalDemandes = demandes.length;
-
-        // Retourner la réponse avec les demandes et le total
-        res.status(200).json({
-            message: 'Demandes récupérées.',
-            totalDemandes, // Ajouter le total des demandes
-            demandes: demandesAvecInfo, // Ajouter les demandes avec les infos du client et prestataire
-        });
+//
+        res.status(200).json({ message: 'Demandes récupérées.', demandes: demandesAvecInfo });
     } catch (error) {
         console.error('Erreur récupération demandes :', error.message);
         res.status(500).json({ message: 'Erreur interne du serveur.' });
