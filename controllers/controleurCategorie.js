@@ -43,12 +43,19 @@ exports.archiverCategorie = async (req, res) => {
 };
 
 // Afficher toutes les catégories non archivées
+
 exports.afficherCategories = async (req, res) => {
     try {
-        const categories = await Categorie.find({ archive: false });
+        // Récupère la valeur du filtre `archive` depuis les paramètres de la requête (true ou false)
+        const archive = req.query.archive;
+
+        // Si un paramètre `archive` est passé, filtre selon cette valeur
+        const categories = await Categorie.find(archive !== undefined ? { archive: archive === 'true' } : {});
+
         res.status(200).json(categories);
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur.", error });
     }
 };
+
 

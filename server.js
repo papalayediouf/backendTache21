@@ -32,6 +32,7 @@ const clientRoutes = require('./routes/routeClient');
 const prestataireRoutes = require('./routes/routePrestataire'); 
 const routeStatistique = require('./routes/routeStatistique'); 
 const routesCategorie = require('./routes/routesCategorie');
+const commentaireRoutes = require('./routes/routeCommentaire');
 
 const Info = require ('./routes/routeinfoprestataire')
 
@@ -46,6 +47,7 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/prestataires', prestataireRoutes);
 app.use('/api/statistiques', routeStatistique);
 app.use('/api/categories', routesCategorie);
+app.use('/api/commentaires', commentaireRoutes);
 
 
 

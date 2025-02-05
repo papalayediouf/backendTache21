@@ -18,7 +18,7 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      
       trim: true,
       maxlength: 500,
       description: 'Description détaillée de la demande de service.',
