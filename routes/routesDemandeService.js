@@ -22,8 +22,6 @@ routeur.post(
 /// **Obtenir toutes les demandes (uniquement admin)**
 routeur.get(
   '/toutes',
-  verifierToken,
-  verifierRole(['admin']),
   obtenirToutesLesDemandes
 );
 

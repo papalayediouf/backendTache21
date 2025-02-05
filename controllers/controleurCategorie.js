@@ -42,6 +42,9 @@ exports.archiverCategorie = async (req, res) => {
     }
 };
 
+
+
+
 // Afficher toutes les catégories non archivées
 
 exports.afficherCategories = async (req, res) => {

@@ -74,22 +74,39 @@ const creerDemandeService = async (req, res) => {
 /// **Obtenir toutes les demandes avec les infos du créateur (Admin)**
 const obtenirToutesLesDemandes = async (req, res) => {
     try {
-        const admin = await Admin.findById(req.utilisateur._id);
-        if (!admin) {
-            return res.status(403).json({ message: "Accès interdit. Seuls les administrateurs peuvent voir toutes les demandes." });
-        }
+        // Récupérer toutes les demandes
+        const demandes = await DemandeService.find();
 
-        const demandes = await DemandeService.find()
-            .populate('utilisateur', 'nom email')
-            .populate('prestataire', 'nom email')
-            .lean();
+        // Récupérer les informations du client et du prestataire pour chaque demande
+        const demandesAvecInfo = await Promise.all(demandes.map(async (demande) => {
+            const client = await Client.findById(demande.client);
+            const prestataire = await Prestataire.findById(demande.prestataire);
 
-        res.status(200).json({ message: 'Demandes récupérées.', demandes });
+            return {
+                ...demande.toObject(),  // Convertir mongoose document en objet pur
+                client: client ? { nom: client.nom, email: client.email } : null,
+                prestataire: prestataire ? { nom: prestataire.nom, email: prestataire.email } : null,
+            };
+        }));
+
+        // Calculer le nombre total de demandes
+        const totalDemandes = demandes.length;
+
+        // Retourner la réponse avec les demandes et le total
+        res.status(200).json({
+            message: 'Demandes récupérées.',
+            totalDemandes, // Ajouter le total des demandes
+            demandes: demandesAvecInfo, // Ajouter les demandes avec les infos du client et prestataire
+        });
     } catch (error) {
         console.error('Erreur récupération demandes :', error.message);
         res.status(500).json({ message: 'Erreur interne du serveur.' });
     }
 };
+
+
+
+
 
 /// **Obtenir les demandes d'un client connecté**
 const obtenirDemandesParClient = async (req, res) => {
