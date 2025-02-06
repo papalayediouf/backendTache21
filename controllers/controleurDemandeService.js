@@ -71,7 +71,7 @@ const creerDemandeService = async (req, res) => {
     }
 };
 
-/// **Obtenir toutes les demandes avec les infos du créateur (Admin)**
+/// **Obtenir toutes les demandes avec les infos du créateur **
 const obtenirToutesLesDemandes = async (req, res) => {
     try {
         const demandes = await DemandeService.find();
@@ -83,19 +83,25 @@ const obtenirToutesLesDemandes = async (req, res) => {
 
             return {
                 ...demande.toObject(),  // Convertir mongoose document en objet pur
-                client: client ? { nom: client.nom, email: client.email } : null,
-                prestataire: prestataire ? { nom: prestataire.nom, email: prestataire.email } : null,
+                client: client ? { 
+                    nom: client.nom, 
+                    email: client.email, 
+                    id: client._id // Ajouter l'ID du client
+                } : null,
+                prestataire: prestataire ? { 
+                    nom: prestataire.nom, 
+                    email: prestataire.email, 
+                    id: prestataire._id // Ajouter l'ID du prestataire
+                } : null,
             };
         }));
-//
+
         res.status(200).json({ demandes: demandesAvecInfo });
     } catch (error) {
         console.error('Erreur récupération demandes :', error.message);
         res.status(500).json({ message: 'Erreur interne du serveur.' });
     }
 };
-
-
 
 
 
