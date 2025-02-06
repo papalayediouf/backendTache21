@@ -12,7 +12,7 @@ const commentaireSchema = new mongoose.Schema({
         required: true,
         enum: ['Client', 'Prestataire', 'Admin'] // Permet de savoir le type d'auteur
     },
-    texte: { type: String, required: true }, // Contenu du commentaire
+    texte: { type: String,  }, // Contenu du commentaire
     note: { type: Number, required: true, min: 1, max: 5 }, // Note sur 5 étoiles
     date: { type: Date, default: Date.now } // Date du commentaire
 });
