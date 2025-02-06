@@ -4,6 +4,8 @@ const Service = require("../models/serviceModele");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
+const Prestataire = require("../models/prestataireModele");
+
 
 //backendTache21/controllers/controleurServices.js
 const ajouterService = async (req, res) => {
@@ -65,6 +67,38 @@ const obtenirTousLesServices = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la récupération des services" });
   }
 };
+
+//
+const obtenirServicesParUtilisateur = async (req, res) => {
+  try {
+    const utilisateurId = req.utilisateur.id; // ID de l'utilisateur authentifié
+
+    // Vérifier si l'utilisateur existe
+    const prestataire = await Prestataire.findById(utilisateurId);
+    if (!prestataire) {
+      return res.status(404).json({ message: "Utilisateur non trouvé." });
+    }
+
+    // Récupérer les services associés au prestataire
+    const services = await Service.find({ prestataire: utilisateurId }).populate("prestataire", "-motDePasse");
+
+    if (services.length === 0) {
+      return res.status(404).json({ message: "Aucun service trouvé pour cet utilisateur." });
+    }
+
+    const servicesWithImageUrls = services.map(service => ({
+      ...service.toObject(),
+      imageUrl: `https://backendtache21.onrender.com/uploads/images/${service.imageService}`,
+    }));
+
+    res.status(200).json(servicesWithImageUrls);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des services : ", err);
+    res.status(500).json({ message: "Erreur interne du serveur." });
+  }
+};
+
+
 
 
 const obtenirDetailService = async (req, res) => {
@@ -146,7 +180,7 @@ const modifierService = async (req, res) => {
   }
 };
 
-module.exports = { ajouterService, obtenirDetailService, obtenirTousLesServices, modifierService };
+module.exports = { ajouterService, obtenirDetailService, obtenirTousLesServices, modifierService, obtenirServicesParUtilisateur };
 
 
 

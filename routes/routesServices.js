@@ -4,6 +4,7 @@ const {
   obtenirDetailService,
   obtenirTousLesServices,
   modifierService,
+  obtenirServicesParUtilisateur
 } = require("../controllers/controleurServices");
 const { verifierToken } = require("../middlewares/authentification");
 const verifierRole = require("../middlewares/verifierRole");
@@ -39,6 +40,15 @@ router.put(
 
 // Route pour obtenir tous les services avec les informations des prestataires
 router.get("/tous-les-services", obtenirTousLesServices);
+
+router.get(
+  "/service-par-utilisateur",
+  verifierToken, // Ajout du middleware de vérification du token
+  obtenirServicesParUtilisateur
+);
+
+
+
 
 // Route pour obtenir les détails d'un service spécifique par ID
 router.get("/:id", obtenirDetailService);
