@@ -48,14 +48,14 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     statut: {
       type: String,
-      enum: ['attente', 'acceptée', 'refusée', 'terminée'],
+      enum: ['attente', 'accepte', 'refuse'],
       default: 'en attente',
       description: 'Statut actuel de la demande de service.',
     },
   },
   {
     timestamps: true, 
-  }
+  } 
 );
 
 module.exports = mongoose.model('DemandeService', DemandeServiceSchema);
