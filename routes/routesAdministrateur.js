@@ -8,7 +8,7 @@ const {
 const { verifierToken } = require('../middlewares/authentification');
 const verifierRole = require('../middlewares/verifierRole');
 const routeur = express.Router();
-
+//
 // Récupérer le profil de l'administrateur
 routeur.get('/profil', verifierToken, verifierRole(['admin']), profilAdministrateur);
 
