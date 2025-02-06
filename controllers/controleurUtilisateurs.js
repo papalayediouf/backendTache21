@@ -10,24 +10,27 @@ const genererToken = (id, role) => {
 };
 
 // **Connexion (Admin, Client, Prestataire)**
+// **Connexion (Admin, Client, Prestataire)**
 const connexion = async (req, res) => {
   const { email, motDePasse } = req.body;
 
   try {
     // Vérifier si l'utilisateur est un admin
     let utilisateur = await Admin.findOne({ email });
-    console.log('Admin trouvé :', utilisateur);  
 
     if (!utilisateur) {
       // Vérifier si l'utilisateur est un prestataire
       utilisateur = await Prestataire.findOne({ email });
-      console.log('Prestataire trouvé :', utilisateur);  
+
+      // Vérifier si le prestataire est inactif
+      if (utilisateur && !utilisateur.actif) {
+        return res.status(403).json({ message: "Votre compte est inactif. Veuillez contacter l'administration." });
+      }
     }
 
     if (!utilisateur) {
       // Vérifier si l'utilisateur est un client
       utilisateur = await Client.findOne({ email });
-      console.log('Client trouvé :', utilisateur); 
     }
 
     // Si aucun utilisateur trouvé
@@ -37,7 +40,6 @@ const connexion = async (req, res) => {
 
     // Vérification du mot de passe
     const motDePasseValide = await bcrypt.compare(motDePasse, utilisateur.motDePasse);
-    console.log('Mot de passe valide :', motDePasseValide);  
 
     if (!motDePasseValide) {
       return res.status(401).json({ message: "Utilisateur ou mot de passe incorrect." });

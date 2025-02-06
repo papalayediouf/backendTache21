@@ -1,3 +1,4 @@
+// backendTache21/models/serviceModele.js
 const mongoose = require('mongoose');
 
 const serviceSchema = mongoose.Schema({
@@ -5,8 +6,8 @@ const serviceSchema = mongoose.Schema({
     categorie: { type: String, required: true },
     descriptionDeService: { type: String, required: true },
     imageService: { type: String, default: ''  },
-    imageDiplomes: { type: String, default: '' }, //
     prestataire: { type: mongoose.Schema.Types.ObjectId, ref: 'Prestataire', required: true },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Service', serviceSchema);
+//

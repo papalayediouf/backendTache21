@@ -15,6 +15,10 @@ const prestataireSchema = mongoose.Schema(
       type: String,
       default: 'prestataire',
     },
+    actif: { 
+      type: Boolean, 
+      default: true // ✅ Par défaut, un prestataire est actif
+    },
     // Champ pour le code de réinitialisation
     codeReset: {
       type: String,

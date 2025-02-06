@@ -7,13 +7,12 @@ const cors = require('cors');
 const path = require('path');
 
 dotenv.config(); 
-
+                                                                        
 connectDB();
 
 const app = express();
 
 app.use(express.json());
-
 app.use(cors());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -31,6 +30,14 @@ const routePrivees = require('./routes/routePrivees');
 const demandeServiceRoutes = require('./routes/routesDemandeService'); 
 const clientRoutes = require('./routes/routeClient'); 
 const prestataireRoutes = require('./routes/routePrestataire'); 
+const routeStatistique = require('./routes/routeStatistique'); 
+const routesCategorie = require('./routes/routesCategorie');
+const commentaireRoutes = require('./routes/routeCommentaire');
+// Importation des routes
+const favorisRoutes = require('./routes/routeFavoris');
+
+
+const Info = require ('./routes/routeinfoprestataire')
 
 // Définition des routes principales
 app.use('/api/utilisateurs', utilisateurRoutes);
@@ -41,12 +48,22 @@ app.use('/api/privees', routePrivees);
 app.use('/api/demandes-services', demandeServiceRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/prestataires', prestataireRoutes);
+app.use('/api/statistiques', routeStatistique);
+app.use('/api/categories', routesCategorie);
+app.use('/api/commentaires', commentaireRoutes);
+app.use('/api/favoris', favorisRoutes);
 
+
+
+
+app.use('/api/', Info);
+
+// Middleware pour gérer les erreurs 404
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Ressource non trouvée.' });
 });
 
-// Middleware global pour gérer les erreurs du serveur
+// Middleware global pour gérer les erreurs serveur
 app.use((err, req, res, next) => {
   console.error('Erreur serveur:', err.stack);
   res.status(500).json({

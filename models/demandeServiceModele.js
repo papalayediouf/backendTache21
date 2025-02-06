@@ -18,7 +18,7 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      
       trim: true,
       maxlength: 500,
       description: 'Description détaillée de la demande de service.',
@@ -48,7 +48,7 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     statut: {
       type: String,
-      enum: ['en attente', 'acceptée', 'refusée', 'terminée'],
+      enum: ['attente', 'acceptée', 'refusée', 'terminée'],
       default: 'en attente',
       description: 'Statut actuel de la demande de service.',
     },

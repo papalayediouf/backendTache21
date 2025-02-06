@@ -1,9 +1,9 @@
-// backendTache21/routes/routesDemandeService.js
 const express = require('express');
 const { verifierToken } = require('../middlewares/authentification');
-const   verifierRole  = require('../middlewares/verifierRole');
+const verifierRole = require('../middlewares/verifierRole');
 const {
   creerDemandeService,
+  obtenirToutesLesDemandes,
   obtenirDemandesParClient,
   obtenirDemandesParPrestataire,
   mettreAJourStatutDemande,
@@ -11,23 +11,21 @@ const {
 
 const routeur = express.Router();
 
-/**
- * @route POST /api/demandes
- * @description Créer une nouvelle demande de service (uniquement pour les clients)
- * @access Privé (Client uniquement)
- */
+/// **Créer une demande (client ou prestataire)**
 routeur.post(
   '/demande',
   verifierToken,
-  verifierRole(['client','prestataire']),
+  verifierRole(['client', 'prestataire']),
   creerDemandeService
 );
 
-/**
- * @route GET /api/demandes/client
- * @description Obtenir toutes les demandes créées par le client connecté
- * @access Privé (Client uniquement)
- */
+/// **Obtenir toutes les demandes (uniquement admin)**
+routeur.get(
+  '/toutes',
+  obtenirToutesLesDemandes
+);
+
+/// **Obtenir les demandes d'un client**
 routeur.get(
   '/client',
   verifierToken,
@@ -35,11 +33,7 @@ routeur.get(
   obtenirDemandesParClient
 );
 
-/**
- * @route GET /api/demandes/prestataire
- * @description Obtenir toutes les demandes assignées au prestataire connecté
- * @access Privé (Prestataire uniquement)
- */
+/// **Obtenir les demandes d'un prestataire**
 routeur.get(
   '/prestataire',
   verifierToken,
@@ -47,11 +41,7 @@ routeur.get(
   obtenirDemandesParPrestataire
 );
 
-/**
- * @route PUT /api/demandes/:id/statut
- * @description Mettre à jour le statut d'une demande de service
- * @access Privé (Prestataire uniquement)
- */
+/// **Mettre à jour le statut d'une demande (prestataire uniquement)**
 routeur.put(
   '/:id/statut',
   verifierToken,

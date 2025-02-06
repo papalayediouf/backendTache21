@@ -1,47 +1,46 @@
-//backend/routes/routesServices.js
-const express = require('express');
-const { ajouterService , obtenirDetailService } = require('../controllers/controleurServices');
-const { verifierToken } = require('../middlewares/authentification');
-const verifierRole = require('../middlewares/verifierRole');
-const Service = require('../models/serviceModele');
-const upload = require('../middlewares/uploadImage');
-
+const express = require("express");
+const {
+  ajouterService,
+  obtenirDetailService,
+  obtenirTousLesServices,
+  modifierService,
+} = require("../controllers/controleurServices");
+const { verifierToken } = require("../middlewares/authentification");
+const verifierRole = require("../middlewares/verifierRole");
+const { uploadServiceImage } = require("../middlewares/uploadImage");
 
 const router = express.Router();
 
 // Route pour ajouter un service
 router.post(
-    '/ajouter',
-    (req, res, next) => {
-        console.log("Requête reçue sur /ajouter");
-        next();
-    },
-    verifierToken,
-    (req, res, next) => {
-        console.log("Utilisateur authentifié :", req.utilisateur);
-        next();
-    },
-    verifierRole(['prestataire']),
-    upload.single("image"),
-    ajouterService
+  "/ajouter",
+  (req, res, next) => {
+    console.log("Requête reçue sur /ajouter");
+    next();
+  },
+  verifierToken,
+  (req, res, next) => {
+    console.log("Utilisateur authentifié :", req.utilisateur);
+    next();
+  },
+  verifierRole(["prestataire"]),
+  uploadServiceImage,
+  ajouterService
 );
 
-router.get('/tous-les-services', async (req, res) => {
-  try {
-    const services = await Service.find();
+// Route pour modifier un service
+router.put(
+  "/modifier/:id",
+  verifierToken,
+  verifierRole(["prestataire"]),
+  uploadServiceImage,
+  modifierService
+);
 
-    const servicesWithImageUrls = services.map(service => ({
-      ...service.toObject(),
-      imageUrl: `https://backendtache21.onrender.com/uploads/images/${service.image}`,  
-    }));
+// Route pour obtenir tous les services avec les informations des prestataires
+router.get("/tous-les-services", obtenirTousLesServices);
 
-    res.status(200).json(servicesWithImageUrls);
-  } catch (err) {
-    console.error('Erreur lors de la récupération des services :', err);
-    res.status(500).json({ message: 'Erreur lors de la récupération des services' });
-  }
-});
+// Route pour obtenir les détails d'un service spécifique par ID
 router.get("/:id", obtenirDetailService);
-
 
 module.exports = router;
