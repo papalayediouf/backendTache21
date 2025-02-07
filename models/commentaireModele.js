@@ -1,20 +1,26 @@
+//backendTache21/models/commentaireModele.js
 const mongoose = require('mongoose');
 
 const commentaireSchema = new mongoose.Schema({
-    service: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true }, // Le service commenté
-    auteur: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        required: true,
-        refPath: 'auteurModel' // Référence dynamique au modèle (Client, Prestataire ou Admin)
-    },
-    auteurModel: {
-        type: String,
-        required: true,
-        enum: ['Client', 'Prestataire', 'Admin'] // Permet de savoir le type d'auteur
-    },
-    texte: { type: String,  }, // Contenu du commentaire
-    note: { type: Number, required: true, min: 1, max: 5 }, // Note sur 5 étoiles
-    date: { type: Date, default: Date.now } // Date du commentaire
+  auteur: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Client', // Référence au modèle Client, modifie selon ton besoin
+    required: true
+  },
+  contenu: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  },
+  service: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Prestataire', // Référence au prestataire concerné, modifie selon ton besoin
+    required: true
+  }
 });
 
 module.exports = mongoose.model('Commentaire', commentaireSchema);

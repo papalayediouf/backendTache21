@@ -48,8 +48,8 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     statut: {
       type: String,
-      enum: ['en attente', 'acceptée', 'refusée', 'terminée'],
-      default: 'en attente',
+      enum: ['attente', 'accepte', 'refuse', ],
+      default: 'attente',
       description: 'Statut actuel de la demande de service.',
     },
   }

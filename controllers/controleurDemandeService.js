@@ -109,6 +109,137 @@ const obtenirDemandesUtilisateur = async (req, res) => {
     }
 };
 
+/// **Accepter une demande de service**
+const accepterDemande = async (req, res) => {
+    try {
+        const { id } = req.params; // ID de la demande
+
+        // Met à jour la demande de service pour la marquer comme acceptée
+        const demande = await DemandeService.findByIdAndUpdate(
+            id,
+            { statut: 'accepte' },
+            { new: true }
+        ).populate('client prestataire', 'nom email');
+
+        if (!demande) {
+            return res.status(404).json({ message: 'Demande de service non trouvée.' });
+        }
+
+        // Envoi d'un email de notification au client et au prestataire
+        const client = await Client.findById(demande.demandeur);
+        const prestataire = await Prestataire.findById(demande.prestataire);
+
+        const mailOptionsClient = {
+            from: process.env.EMAIL_USER,
+            to: client.email,
+            subject: 'Votre demande a été acceptée',
+            html: `
+                <h3>Bonjour ${client.nom},</h3>
+                <p>Votre demande de service a été acceptée par le prestataire ${prestataire.nom}.</p>
+            `,
+        };
+
+        const mailOptionsPrestataire = {
+            from: process.env.EMAIL_USER,
+            to: prestataire.email,
+            subject: `Demande acceptée par le client ${client.nom}`,
+            html: `
+                <h3>Bonjour ${prestataire.nom},</h3>
+                <p>La demande de service de ${client.nom} a été acceptée.</p>
+            `,
+        };
+
+        transporter.sendMail(mailOptionsClient, (error, info) => {
+            if (error) {
+                console.error('Erreur lors de l\'envoi de l\'email au client :', error.message);
+            } else {
+                console.log('Email envoyé au client :', info.response);
+            }
+        });
+
+        transporter.sendMail(mailOptionsPrestataire, (error, info) => {
+            if (error) {
+                console.error('Erreur lors de l\'envoi de l\'email au prestataire :', error.message);
+            } else {
+                console.log('Email envoyé au prestataire :', info.response);
+            }
+        });
+
+        res.status(200).json({
+            message: 'Demande acceptée avec succès.',
+            demande,
+        });
+    } catch (error) {
+        console.error('Erreur lors de l\'acceptation de la demande :', error.message);
+        res.status(500).json({ message: 'Erreur interne du serveur.' });
+    }
+};
+
+/// **Refuser une demande de service**
+const refuserDemande = async (req, res) => {
+    try {
+        const { id } = req.params; // ID de la demande
+
+        // Met à jour la demande de service pour la marquer comme refusée
+        const demande = await DemandeService.findByIdAndUpdate(
+            id,
+            { statut: 'refuse' },
+            { new: true }
+        ).populate('client prestataire', 'nom email');
+
+        if (!demande) {
+            return res.status(404).json({ message: 'Demande de service non trouvée.' });
+        }
+
+        // Envoi d'un email de notification au client et au prestataire
+        const client = await Client.findById(demande.demandeur);
+        const prestataire = await Prestataire.findById(demande.prestataire);
+
+        const mailOptionsClient = {
+            from: process.env.EMAIL_USER,
+            to: client.email,
+            subject: 'Votre demande a été refusée',
+            html: `
+                <h3>Bonjour ${client.nom},</h3>
+                <p>Votre demande de service a été refusée par le prestataire ${prestataire.nom}.</p>
+            `,
+        };
+
+        const mailOptionsPrestataire = {
+            from: process.env.EMAIL_USER,
+            to: prestataire.email,
+            subject: `Demande refusée par le client ${client.nom}`,
+            html: `
+                <h3>Bonjour ${prestataire.nom},</h3>
+                <p>La demande de service de ${client.nom} a été refusée.</p>
+            `,
+        };
+
+        transporter.sendMail(mailOptionsClient, (error, info) => {
+            if (error) {
+                console.error('Erreur lors de l\'envoi de l\'email au client :', error.message);
+            } else {
+                console.log('Email envoyé au client :', info.response);
+            }
+        });
+
+        transporter.sendMail(mailOptionsPrestataire, (error, info) => {
+            if (error) {
+                console.error('Erreur lors de l\'envoi de l\'email au prestataire :', error.message);
+            } else {
+                console.log('Email envoyé au prestataire :', info.response);
+            }
+        });
+
+        res.status(200).json({
+            message: 'Demande refusée avec succès.',
+            demande,
+        });
+    } catch (error) {
+        console.error('Erreur lors du refus de la demande :', error.message);
+        res.status(500).json({ message: 'Erreur interne du serveur.' });
+    }
+};
 
 
 /// **Obtenir les demandes d'un client connecté**
@@ -191,4 +322,6 @@ module.exports = {
     obtenirDemandesParPrestataire,
     mettreAJourStatutDemande,
     obtenirDemandesUtilisateur,
+    accepterDemande,
+    refuserDemande,
 };

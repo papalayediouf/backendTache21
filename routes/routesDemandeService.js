@@ -1,13 +1,14 @@
-// backendTache21/routes/routesDemandeService.js
 const express = require('express');
 const { verifierToken } = require('../middlewares/authentification');
-const   verifierRole  = require('../middlewares/verifierRole');
+const verifierRole = require('../middlewares/verifierRole');
 const {
   creerDemandeService,
   obtenirDemandesParClient,
   obtenirDemandesParPrestataire,
   mettreAJourStatutDemande,
-  obtenirDemandesUtilisateur
+  obtenirDemandesUtilisateur,
+  accepterDemande,
+  refuserDemande
 } = require('../controllers/controleurDemandeService');
 
 const routeur = express.Router();
@@ -20,7 +21,7 @@ const routeur = express.Router();
 routeur.post(
   '/demande',
   verifierToken,
-  verifierRole(['client','prestataire']),
+  verifierRole(['client', 'prestataire']),
   creerDemandeService
 );
 
@@ -36,6 +37,11 @@ routeur.get(
   obtenirDemandesParClient
 );
 
+/**
+ * @route GET /api/demandes/clientAll
+ * @description Obtenir toutes les demandes d'un utilisateur (admin, client, prestataire)
+ * @access Privé (Admin uniquement)
+ */
 routeur.get(
   '/clientAll',
   obtenirDemandesUtilisateur
@@ -63,6 +69,30 @@ routeur.put(
   verifierToken,
   verifierRole(['prestataire']),
   mettreAJourStatutDemande
+);
+
+/**
+ * @route PUT /api/demandes/:id/accepter
+ * @description Accepter une demande de service
+ * @access Privé (Prestataire uniquement)
+ */
+routeur.put(
+  '/:id/accepter',
+  verifierToken,
+  verifierRole(['prestataire']),
+  accepterDemande
+);
+
+/**
+ * @route PUT /api/demandes/:id/refuser
+ * @description Refuser une demande de service
+ * @access Privé (Prestataire uniquement)
+ */
+routeur.put(
+  '/:id/refuser',
+  verifierToken,
+  verifierRole(['prestataire']),
+  refuserDemande
 );
 
 module.exports = routeur;
