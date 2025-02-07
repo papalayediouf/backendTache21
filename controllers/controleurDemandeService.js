@@ -1,6 +1,8 @@
 const DemandeService = require('../models/demandeServiceModele');
-const Utilisateur = require('../models/prestataireModele');
-const transporter = require('../config/emailConfig'); // Configuration de Nodemailer
+const transporter = require('../config/emailConfig');
+const Prestataire = require('../models/prestataireModele');
+const Client = require('../models/clientModele');
+const Admin = require('../models/adminModele'); // Configuration de Nodemailer
 
 /// **Créer une demande de service et l'envoyer à un prestataire**
 const creerDemandeService = async (req, res) => {
@@ -13,7 +15,7 @@ const creerDemandeService = async (req, res) => {
         }
 
         // Vérifie si le prestataire existe et qu'il a le bon rôle
-        const prestataire = await Utilisateur.findById(prestataireId);
+        const prestataire = await Prestataire.findById(prestataireId);
         if (!prestataire || prestataire.role !== 'prestataire') {
             return res.status(404).json({ message: 'Prestataire non trouvé ou rôle invalide.' });
         }
@@ -25,7 +27,7 @@ const creerDemandeService = async (req, res) => {
             description,
             adresse,
             date,
-            client: req.utilisateur.id, // Client connecté
+            demandeur: req.utilisateur.id, // Client connecté
             prestataire: prestataireId,
             statut: 'en attente', // Statut initial
         });
@@ -42,10 +44,12 @@ const creerDemandeService = async (req, res) => {
                 <h3>Bonjour ${prestataire.nom},</h3>
                 <p>Vous avez reçu une nouvelle demande de service :</p>
                 <ul>
-                    <li><strong>Type de service :</strong> ${typeService}</li>
-                    <li><strong>Numéro de téléphone :</strong> ${numeroTelephone}</li>
-                    <li><strong>Description et adresse :</strong> ${description}</li>
-                    <li><strong>Date :</strong> ${date}</li>
+                    <li><strong>Type de service:</strong> ${typeService}</li>
+                    <li><strong>Numéro de téléphone:</strong> ${numeroTelephone}</li>
+                    <li><strong>Description:</strong> ${description}</li>
+
+                    <li><strong>Adresse:</strong> ${adresse}</li>
+                    <li><strong>Date:</strong> ${new Date(date).toLocaleDateString('fr-FR')}</li>
                 </ul>
                 <p>Veuillez vous connecter à votre compte pour consulter les détails et répondre à cette demande.</p>
             `,
@@ -68,6 +72,44 @@ const creerDemandeService = async (req, res) => {
         res.status(500).json({ message: 'Erreur interne du serveur.' });
     }
 };
+
+const obtenirDemandesUtilisateur = async (req, res) => {
+    try {
+        const demandes = await DemandeService.find();
+
+        // Récupérer les informations du client et du prestataire pour chaque demande
+        const demandesAvecInfo = await Promise.all(demandes.map(async (demande) => {
+            const client = await Client.findById(demande.demandeur);
+            const demandeurs = await Prestataire.findById(demande.demandeur)
+            const prestataire = await Prestataire.findById(demande.prestataire);
+
+            return {
+                ...demande.toObject(),  // Convertir mongoose document en objet pur
+                demandeur: client ? {
+                    nom: client.nom,
+                    email: client.email,
+                    id: client._id // Ajouter l'ID du client
+                } : demandeurs ? {
+                    nom: demandeurs.nom,
+                    email: demandeurs.email,
+                    id: demandeurs._id
+                } : null,
+                prestataire: prestataire ? {
+                    nom: prestataire.nom,
+                    email: prestataire.email,
+                    id: prestataire._id // Ajouter l'ID du prestataire
+                } : null,
+            };
+        }));
+
+        res.status(200).json({ demandes: demandesAvecInfo });
+    } catch (error) {
+        console.error('Erreur récupération demandes :', error.message);
+        res.status(500).json({ message: 'Erreur interne du serveur.' });
+    }
+};
+
+
 
 /// **Obtenir les demandes d'un client connecté**
 const obtenirDemandesParClient = async (req, res) => {
@@ -148,4 +190,5 @@ module.exports = {
     obtenirDemandesParClient,
     obtenirDemandesParPrestataire,
     mettreAJourStatutDemande,
+    obtenirDemandesUtilisateur,
 };

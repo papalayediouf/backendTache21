@@ -7,6 +7,7 @@ const {
   obtenirDemandesParClient,
   obtenirDemandesParPrestataire,
   mettreAJourStatutDemande,
+  obtenirDemandesUtilisateur
 } = require('../controllers/controleurDemandeService');
 
 const routeur = express.Router();
@@ -33,6 +34,11 @@ routeur.get(
   verifierToken,
   verifierRole(['client']),
   obtenirDemandesParClient
+);
+
+routeur.get(
+  '/clientAll',
+  obtenirDemandesUtilisateur
 );
 
 /**

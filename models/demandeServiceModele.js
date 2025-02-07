@@ -34,9 +34,9 @@ const DemandeServiceSchema = new mongoose.Schema(
       required: true,
       description: 'Date prévue pour le service.',
     },
-    client: {
+    demandeur: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Client',
+      ref: 'Client' || 'Prestataire',
       required: true,
       description: 'Référence vers l’utilisateur client ayant fait la demande.',
     },
