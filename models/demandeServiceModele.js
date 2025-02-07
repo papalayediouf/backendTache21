@@ -18,7 +18,7 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      
+      required: true,
       trim: true,
       maxlength: 500,
       description: 'Description détaillée de la demande de service.',
@@ -34,28 +34,26 @@ const DemandeServiceSchema = new mongoose.Schema(
       required: true,
       description: 'Date prévue pour le service.',
     },
-    client: {
+    demandeur: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'client',
+      ref: 'Client' || 'Prestataire',
       required: true,
       description: 'Référence vers l’utilisateur client ayant fait la demande.',
     },
     prestataire: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'prestataire',
+      ref: 'Prestataire',
       required: true,
       description: 'Référence vers le prestataire assigné à la demande.',
     },
     statut: {
       type: String,
-      enum: ['attente', 'accepte', 'refuse'],
+      enum: ['en attente', 'acceptée', 'refusée', 'terminée'],
       default: 'en attente',
       description: 'Statut actuel de la demande de service.',
     },
-  },
-  {
-    timestamps: true, 
-  } 
+  }
+  
 );
 
 module.exports = mongoose.model('DemandeService', DemandeServiceSchema);
