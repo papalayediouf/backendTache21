@@ -1,26 +1,31 @@
-//backendTache21/models/commentaireModele.js
 const mongoose = require('mongoose');
 
+// Définir le schéma du commentaire
 const commentaireSchema = new mongoose.Schema({
-  auteur: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Client', // Référence au modèle Client, modifie selon ton besoin
-    required: true
+  service: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Service',  // Lien avec le modèle Service
+    required: true 
   },
-  contenu: {
-    type: String,
-    required: true,
-    trim: true
+  commentaire: { 
+    type: String, 
+    minlength: 1,
+    maxlength: 500  // Limite la taille du commentaire à 500 caractères
   },
-  date: {
-    type: Date,
-    default: Date.now
+  note: { 
+    type: Number, 
+    min: 1,   // La note minimale
+    max: 5,   // La note maximale
+    ///
   },
-  service: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Prestataire', // Référence au prestataire concerné, modifie selon ton besoin
-    required: true
+  date: { 
+    type: Date, 
+    default: Date.now  // La date d'ajout du commentaire
   }
 });
 
-module.exports = mongoose.model('Commentaire', commentaireSchema);
+// Créer le modèle basé sur le schéma
+const Commentaire = mongoose.model('Commentaire', commentaireSchema);
+
+// Exporter le modèle
+module.exports = Commentaire;
