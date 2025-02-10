@@ -1,5 +1,3 @@
-//backendTache21/models/demandeServiceModele.js
-
 const mongoose = require('mongoose');
 
 const DemandeServiceSchema = new mongoose.Schema(
@@ -36,9 +34,15 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     demandeur: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Client' || 'Prestataire',
       required: true,
-      description: 'Référence vers l’utilisateur client ayant fait la demande.',
+      description: 'Référence vers l’utilisateur ayant fait la demande.',
+      refPath: 'demandeurType', // Référence dynamique
+    },
+    demandeurType: {
+      type: String,
+      required: true,
+      enum: ['Client', 'Prestataire'], // Peut être un client ou un prestataire
+      description: 'Type d\'utilisateur (Client ou Prestataire) qui fait la demande.',
     },
     prestataire: {
       type: mongoose.Schema.Types.ObjectId,
@@ -48,12 +52,11 @@ const DemandeServiceSchema = new mongoose.Schema(
     },
     statut: {
       type: String,
-      enum: ['attente', 'accepte', 'refuse', ],
+      enum: ['attente', 'accepte', 'refuse'],
       default: 'attente',
       description: 'Statut actuel de la demande de service.',
     },
   }
-  
 );
 
 module.exports = mongoose.model('DemandeService', DemandeServiceSchema);
